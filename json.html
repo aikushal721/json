@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shlok JSON Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Gujarati:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F4EDDC;
+    --surface: #FFFCF4;
+    --surface-2: #FBF1DE;
+    --ink: #2B1810;
+    --ink-soft: #6B5640;
+    --maroon: #7C1F2C;
+    --maroon-dark: #5C1620;
+    --gold: #B6862C;
+    --gold-soft: #E8D5A3;
+    --error: #AE3A2E;
+    --line: #E2D3AE;
+    --radius: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(182,134,44,0.07), transparent 40%),
+      radial-gradient(circle at 95% 100%, rgba(124,31,44,0.06), transparent 40%);
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 40px);
+  }
+
+  a{ color: inherit; }
+
+  /* ---------- Header ---------- */
+  header.app-head{
+    max-width: 1180px;
+    margin: 0 auto 28px auto;
+  }
+
+  .eyebrow{
+    font-family: 'Noto Sans Gujarati', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+  }
+
+  h1.title{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 0 0 8px 0;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  p.subtitle{
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 0 0 18px 0;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+
+  .steps{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+    align-items: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+  }
+  .steps .step{ display:flex; align-items:center; gap:8px; padding: 0 14px; }
+  .steps .num{
+    font-family: 'Noto Sans Gujarati', sans-serif;
+    color: var(--maroon);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .steps .arrow{ color: var(--gold); opacity: 0.7; }
+
+  /* ---------- Layout ---------- */
+  main.layout{
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  @media (max-width: 880px){
+    main.layout{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .panel h2{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 14px 0;
+    display:flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ---------- Config strip (delimiter + id) ---------- */
+  .config-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 520px){ .config-grid{ grid-template-columns: 1fr; } }
+
+  .config-box{
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .config-box .label-row{
+    display:flex; align-items:center; justify-content: space-between;
+    font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .radio-line{ display:flex; align-items:center; gap:7px; font-size: 13.5px; margin-bottom: 6px; color: var(--ink); }
+  .radio-line input{ accent-color: var(--maroon); }
+  .mini-input{
+    width: 100%;
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .id-row{ display:flex; align-items:center; gap: 8px; font-size: 13.5px; margin-bottom: 8px; }
+  .id-row input[type=checkbox]{ accent-color: var(--maroon); width: 15px; height: 15px; }
+  .id-fields{ display:flex; gap: 8px; }
+  .id-fields > div{ flex:1; }
+  .id-fields label{ font-size: 11px; color: var(--ink-soft); display:block; margin-bottom: 3px; }
+
+  input[type=text], input[type=number]{
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+  }
+  input:focus-visible, textarea:focus-visible, button:focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  input:disabled{ opacity: 0.45; }
+
+  /* ---------- Field rows ---------- */
+  #fieldsContainer{ display:flex; flex-direction: column; gap: 12px; }
+
+  .field-row{
+    display:flex;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-2);
+    padding: 12px;
+  }
+
+  .field-num{
+    font-family: 'Noto Sans Gujarati', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--maroon);
+    width: 26px;
+    flex-shrink: 0;
+    padding-top: 6px;
+    text-align: center;
+  }
+
+  .field-main{ flex:1; min-width: 0; }
+
+  .field-head{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .field-key{
+    flex: 1 1 140px;
+    min-width: 100px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    color: var(--maroon-dark);
+    background: #fff;
+  }
+
+  .field-count{
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    padding: 2px 8px;
+    background: var(--gold-soft);
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .icon-btn{
+    width: 28px; height: 28px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .icon-btn:hover{ background: var(--gold-soft); color: var(--maroon-dark); border-color: var(--gold); }
+  .icon-btn svg{ width: 15px; height: 15px; }
+  .icon-btn.danger:hover{ background: #F4DAD6; color: var(--error); border-color: var(--error); }
+
+  textarea.field-content{
+    width: 100%;
+    min-height: 96px;
+    resize: vertical;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.8px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .row-actions{
+    display:flex; align-items:center; justify-content: space-between;
+    margin-top: 14px;
+  }
+
+  .btn{
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{ border-color: var(--gold); background: var(--surface-2); }
+  .btn:active{ transform: translateY(1px); }
+  .btn svg{ width: 15px; height: 15px; }
+
+  .btn-ghost{ background: transparent; border-color: transparent; color: var(--ink-soft); padding: 9px 8px; }
+  .btn-ghost:hover{ background: var(--surface-2); color: var(--ink); }
+
+  .btn-primary{
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: #FBF1DE;
+    width: 100%;
+    justify-content: center;
+    padding: 13px 16px;
+    font-size: 15px;
+    margin-top: 16px;
+  }
+  .btn-primary:hover{ background: var(--maroon-dark); border-color: var(--maroon-dark); }
+  .btn-primary:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ---------- Output panel ---------- */
+  .output-head{
+    display:flex; align-items:center; justify-content: space-between; gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .seal{
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--maroon);
+    background: var(--gold-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--maroon-dark);
+    flex-shrink: 0;
+  }
+
+  .output-actions{ display:flex; gap: 8px; }
+
+  .output-frame{
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .output-frame::before{
+    content:"";
+    display:block;
+    height: 3px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold));
+  }
+
+  pre#output{
+    margin: 0;
+    padding: 16px;
+    max-height: 480px;
+    overflow: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .empty-state{
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  .empty-state .eyebrow{ margin-bottom: 4px; }
+
+  .warning-banner, .error-banner{
+    font-size: 12.8px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .warning-banner{ background: #FBF0DC; border: 1px solid var(--gold); color: #6B4E16; }
+  .error-banner{ background: #FBE2DE; border: 1px solid var(--error); color: var(--error); font-weight: 600; }
+
+  .download-bar{
+    display:flex; gap: 8px; margin-top: 14px;
+  }
+  .download-bar input{ flex:1; }
+
+  footer.note{
+    max-width: 1180px;
+    margin: 18px auto 0 auto;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+  }
+
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(3px);} to{ opacity:1; transform:none; } }
+  .fade-in{ animation: fadeIn .25s ease; }
+</style>
+</head>
+<body>
+
+<header class="app-head">
+  <p class="eyebrow">પાઠ સંગ્રહ — Text Collection Tool</p>
+  <h1 class="title">Shlok JSON Builder</h1>
+  <p class="subtitle">Paste or upload your Sanskrit, Gujarati, English (or any) text files as separate fields, name each field, and combine them into one structured JSON file — no coding required.</p>
+  <div class="steps">
+    <span class="step"><span class="num">૧</span> Add your fields</span>
+    <span class="arrow">→</span>
+    <span class="step"><span class="num">૨</span> Paste or upload text per field</span>
+    <span class="arrow">→</span>
+    <span class="step"><span class="num">૩</span> Generate JSON</span>
+    <span class="arrow">→</span>
+    <span class="step"><span class="num">૪</span> Copy or download</span>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- LEFT: CONFIG -->
+  <section class="panel">
+    <h2>Fields</h2>
+
+    <div class="config-grid">
+      <div class="config-box">
+        <div class="label-row">Entry separator</div>
+        <label class="radio-line">
+          <input type="radio" name="delim" value="blank" checked> Blank line between entries
+        </label>
+        <label class="radio-line">
+          <input type="radio" name="delim" value="custom"> Custom separator
+        </label>
+        <input type="text" id="customDelim" class="mini-input" value="---" disabled placeholder="e.g. ---">
+      </div>
+
+      <div class="config-box">
+        <div class="label-row">Auto ID</div>
+        <label class="id-row">
+          <input type="checkbox" id="idEnabled" checked> Add an auto-incrementing ID field
+        </label>
+        <div class="id-fields">
+          <div>
+            <label for="idKey">Key name</label>
+            <input type="text" id="idKey" value="id">
+          </div>
+          <div>
+            <label for="idStart">Start at</label>
+            <input type="number" id="idStart" value="1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fieldsContainer"></div>
+
+    <div class="row-actions">
+      <button class="btn" id="addFieldBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add field
+      </button>
+      <button class="btn btn-ghost" id="clearAllBtn">Clear all fields</button>
+    </div>
+
+    <div id="errorBanner"></div>
+
+    <button class="btn-primary" id="generateBtn">Generate JSON</button>
+  </section>
+
+  <!-- RIGHT: OUTPUT -->
+  <section class="panel">
+    <div class="output-head">
+      <h2 style="margin:0;">Output</h2>
+      <div class="seal" id="seal">0</div>
+    </div>
+
+    <div id="warningBanner"></div>
+
+    <div class="output-frame">
+      <pre id="output"></pre>
+    </div>
+
+    <div class="output-actions" style="margin-top:14px;">
+      <button class="btn" id="copyBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy JSON
+      </button>
+    </div>
+
+    <div class="download-bar">
+      <input type="text" id="filename" value="shikshapatri-shlok.json">
+      <button class="btn" id="downloadBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="note">Everything runs in your browser — your text never leaves this page.</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var GUJ_DIGITS = ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'];
+  function toGujNum(n){
+    return String(n).split('').map(function(d){
+      var i = parseInt(d, 10);
+      return isNaN(i) ? d : GUJ_DIGITS[i];
+    }).join('');
+  }
+
+  var fields = [];
+  var counter = 0;
+  function uid(){ counter += 1; return 'f' + counter; }
+
+  var fieldsContainer = document.getElementById('fieldsContainer');
+  var lastGenerated = '';
+
+  // ---------- demo data (Shikshapatri, Shlok 1-10) ----------
+  var demoSanskrit = [
+    "वामे यस्य स्थिता राधा श्रीश्च यस्यास्ति वक्षसि ।\nवृन्दावनविहारं तं श्रीकृष्णं हृदि चिन्तये ।।१।।",
+    "लिखामि सहजानन्द स्वामी सर्वान्निजाश्रितान्‌ । नानादेशस्थितान्‌ शिक्षापत्रीं वृत्तालयस्थित: ।।२।।",
+    "भ्रात्रो रामप्रतापेच्छारामयोर्धर्मजन्मनो: । यावयोध्याप्रसादाख्यरघुवीराभिधौ सुतौ ।।३।।",
+    "मुकुन्दानन्दमुख्याश्च नैष्ठिका ब्रह्मचारिण: । गृहस्थाश्च मयारामभट्टाद्या ये मदाश्रया: ।।४।।",
+    "सधवा विधवा योषा याश्च मच्छिष्यतां गता: । मुक्तानन्दादयो ये स्यु: साधवश्चाखिला अपि ।।५।।",
+    "स्वधर्मरक्षिका मे तै: सर्वैर्वाच्या: सदाशिष: । श्रीमन्नारायणस्मृत्या सहिता: शास्त्रसम्मता: ।।६।।",
+    "एकाग्रेणैव मनसा पत्रीलेख: सहेतुक: । अवधार्योऽयमखिलै: सर्वजीवहितावह: ।।७।।",
+    "ये पालयन्ति मनुजा: सच्छास्त्रप्रतिपादितान्‌ । सदाचारान्‌ सदा तेऽत्र परत्र च महासुखा: ।।८।।",
+    "तानुल्लङ्घयात्र वर्तन्ते ये तु स्वैरं कुबुद्धय: । त इहामुत्र च महल्लभन्ते कष्टमेव हि ।।९।।",
+    "अतो भवद्‌भिर्मच्छिष्यै: सावधानतयाऽखिलै: । प्रीत्यैतामनुसृत्यैव वर्तितव्यं निरन्तरम्‌ ।।१०।।"
+  ];
+
+  var demoGujarati = [
+    "હું જે તે મારા હૃદયને વિષે શ્રીકૃષ્ણ ભગવાનનું ધ્યાન કરૂં છું તે શ્રીકૃષ્ણ કેવા છે, તો – જેના ડાબા પડખાને વિષે રાધિકાજી રહ્યા છે, અને જેના વક્ષ:સ્થળને વિષે લક્ષ્મીજી રહ્યા છે અને વૃન્દાવનને વિષે વિહારના કરનારા છે. ||૧||",
+    "અને વૃત્તાલય ગામને વિષે રહ્યા એવા સહજાનંદ સ્વામી જે અમે, તે અમે જે તે નાના પ્રકારના જે સર્વે દેશ તેમને વિશે રહ્યા એવા જે અમારા આશ્રિત સર્વે સત્સંગી તે પ્રત્યે શિક્ષાપત્રીને લખીએ છીએ. ||૨||",
+    "શ્રી ધર્મદેવ થકી છે જન્મ જેમનો એવા જે અમારા ભાઈ રામપ્રતાપજી તથા ઈચ્છારામજી તેમના પુત્ર જે અયોધ્યાપ્રસાદ નામે અને રઘુવીર નામે (જેને અમે અમારા દત્તપુત્ર કરીને સર્વે સત્સંગીના આચારયપણાને વિષે સ્થાપન કર્યા છે.) ||૩||",
+    "તથા અમારા આશ્રિત એવા જે મુકુંદાનંદ આદિક નૈષ્ઠિક બ્રહ્મચારી તથા અમારા આશ્રિત જે મયારામ ભટ્ટ આદિક ગૃહસ્થ સત્સંગી. ||૪||",
+    "તથા અમારે આશ્રિત જે સુવાસિની અને વિધવા એવી સર્વે બાઈઓ તથા મુક્તાનંદ આદિક જે સર્વે સાધુ. ||૫||",
+    "એ સર્વે-તેમણે પોતાના ધર્મની રક્ષાના કરનારા અને શાસ્ત્રને વિષે પ્રમાણરૂપ અને શ્રીમન્નારાયણની સ્મૃ તિ એ સહિત એવા જે અમારા રૂડા આશીર્વાદ તે વાંચવા. ||૬||",
+    "અને આ શિક્ષાપત્રી લખ્યાનું જે કારણ છે તે સર્વે તેમણે એકાગ્ર મને કરીને ધારવું અને આ શિક્ષાપત્રી જે અમે લખી છે, તે સર્વેના જીવને હિતની કરનારી છે. ||૭||",
+    "અને શ્રીમદ્ ભાગવત પુરાણ આદિક જે સત્શાસ્ત્ર તેમણે જીવના કલ્યાણને અર્થે પ્રતિપાદન કર્યા એવા જે અહિંસા આદિક સદાચાર તેમને જે મનુષ્ય પાળે છે તે મનુષ્ય જે તે આ લોકને વિષે તથા પરલોકને વિષે મહાસુખિયા થાય છે. ||૮||",
+    "અને તે સદાચારનું ઉલ્લંઘન કરીને જે મનુષ્ય પોતાના મનમાં આવે તેમ વર્તે છે, તે તો કુબુધ્ધિવાળા છે અને આ લોક ને પરલોકને વિષે નિશ્ચે મોટા કષ્ટને જ પામે છે. ||૯||",
+    "તે માટે અમારા શિષ્ય એવા જે તમે સર્વે તેમણે તો પ્રીતિએ કરીને આ શિક્ષાપત્રીને અનુસરીને જ નિરંતર સાવધાનપણે વર્તવું, પણ આ શિક્ષાપત્રીનું ઉલ્લંઘન કરીને વર્તવું નહિ. ||૧૦||"
+  ];
+
+  var demoEnglish = [
+    "I (Sahajanand Swami, Lord Swaminarayan) meditate, in my heart, upon Lord Shree Krishna, on whose left stands Radhikaji, in whose heart resides Laxmiji and who plays (with His Bhaktas) in Vrindavan. || 1 ||",
+    "I Sahajanand Swami, write this Shikshapatri, Gospel of Life Divine, from Vadtal, to all my disciples who reside in different parts of the world ||2||",
+    "Shree Dharmadev's sons, Rampratapji and Icharamji, who are brothers, Rampratapji's son Ayodhyaprasad and Icharamji's son, Raghuvir; (whom I have adopted as my sons and established as the Acharyas of my disciples) ||3||",
+    "Mukundananda as a main & all 'Naishthik Brahmcharis' (Brahmin celibates), and Mayaram Bhatt as a main & all my others Grihastas devotees; (householders) ||4||",
+    "My disciples, all married women, widows as My devotees, and all Sadhus headed by Muktanand and others; Blessing ||5||",
+    "With remembrance of 'Shreeman-Narayan', all my disciples who are defendant of 'Swadharma' (self religion) as per 'Shastras' accept my ennobling blessings. ||6||",
+    "You all my devotees with concentration of mind think over the purpose of 'Shikshapatri' written by me for the spiritual welfare of every soul, realize and follow. ||7||",
+    "Those who will follow the Rules of Ethics as prescribed by the holy scriptures shall derive happiness in this world as well as in 'Parlok' (after death, pleasure of abode of Lord, Moksha). ||8||",
+    "Those who will violate the Rules of Ethics and behave willfully, are evil minded and shall suffer great distress in this world as well as in 'Parlok' (after death causing pain, go to hell). ||9||",
+    "Those who will violate the Hence forever, all my disciples do love and follow the commandments of this Shikshapatri vigilantly and do not violate them. ||10||"
+  ];
+
+  // ---------- icons ----------
+  var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+  function countEntries(text, mode, customDelim){
+    return splitEntries(text, mode, customDelim).length;
+  }
+
+  function splitEntries(text, mode, customDelim){
+    if (!text) return [];
+    var t = text.replace(/\r\n/g, '\n');
+    var parts;
+    if (mode === 'custom' && customDelim) {
+      parts = t.split(customDelim);
+    } else {
+      parts = t.split(/\n[ \t]*\n+/);
+    }
+    return parts.map(function(p){ return p.trim(); }).filter(function(p){ return p.length > 0; });
+  }
+
+  function currentDelimMode(){
+    var checked = document.querySelector('input[name="delim"]:checked');
+    return checked ? checked.value : 'blank';
+  }
+  function currentCustomDelim(){
+    return document.getElementById('customDelim').value || '---';
+  }
+
+  function updateRowCount(field, rowEl){
+    var n = countEntries(field.content, currentDelimMode(), currentCustomDelim());
+    var badge = rowEl.querySelector('.field-count');
+    badge.textContent = n + (n === 1 ? ' entry' : ' entries');
+  }
+
+  function recountAll(){
+    var rows = fieldsContainer.querySelectorAll('.field-row');
+    rows.forEach(function(rowEl){
+      var id = rowEl.getAttribute('data-field-id');
+      var field = fields.find(function(f){ return f.id === id; });
+      if (field) updateRowCount(field, rowEl);
+    });
+  }
+
+  function appendFieldRow(field){
+    var row = document.createElement('div');
+    row.className = 'field-row';
+    row.setAttribute('data-field-id', field.id);
+
+    var num = document.createElement('div');
+    num.className = 'field-num';
+    num.textContent = toGujNum(fields.length);
+
+    var main = document.createElement('div');
+    main.className = 'field-main';
+
+    var head = document.createElement('div');
+    head.className = 'field-head';
+
+    var keyInput = document.createElement('input');
+    keyInput.type = 'text';
+    keyInput.className = 'field-key';
+    keyInput.value = field.key;
+    keyInput.setAttribute('aria-label', 'Field key name');
+    keyInput.placeholder = 'key name';
+    keyInput.addEventListener('input', function(){
+      field.key = keyInput.value;
+    });
+
+    var countBadge = document.createElement('span');
+    countBadge.className = 'field-count';
+    countBadge.textContent = '0 entries';
+
+    var uploadBtn = document.createElement('button');
+    uploadBtn.type = 'button';
+    uploadBtn.className = 'icon-btn';
+    uploadBtn.title = 'Upload a .txt file';
+    uploadBtn.innerHTML = ICON_UPLOAD;
+
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.txt,text/plain';
+    fileInput.hidden = true;
+
+    uploadBtn.addEventListener('click', function(){ fileInput.click(); });
+    fileInput.addEventListener('change', function(){
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var text = String(e.target.result || '');
+        textarea.value = text;
+        field.content = text;
+        updateRowCount(field, row);
+      };
+      reader.readAsText(file);
+      fileInput.value = '';
+    });
+
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn danger';
+    removeBtn.title = 'Remove this field';
+    removeBtn.innerHTML = ICON_TRASH;
+    removeBtn.addEventListener('click', function(){
+      if (fields.length <= 1){
+        showError('At least one field is needed.');
+        return;
+      }
+      fields = fields.filter(function(f){ return f.id !== field.id; });
+      row.remove();
+      renumberRows();
+    });
+
+    head.appendChild(keyInput);
+    head.appendChild(countBadge);
+    head.appendChild(uploadBtn);
+    head.appendChild(fileInput);
+    head.appendChild(removeBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'field-content';
+    textarea.placeholder = 'Paste content here. Separate each entry with a blank line.';
+    textarea.value = field.content;
+    textarea.addEventListener('input', function(){
+      field.content = textarea.value;
+      updateRowCount(field, row);
+    });
+
+    main.appendChild(head);
+    main.appendChild(textarea);
+
+    row.appendChild(num);
+    row.appendChild(main);
+
+    fieldsContainer.appendChild(row);
+    updateRowCount(field, row);
+  }
+
+  function renumberRows(){
+    var rows = fieldsContainer.querySelectorAll('.field-row');
+    rows.forEach(function(rowEl, idx){
+      rowEl.querySelector('.field-num').textContent = toGujNum(idx + 1);
+    });
+  }
+
+  function addField(key, content){
+    var field = { id: uid(), key: key, content: content || '' };
+    fields.push(field);
+    appendFieldRow(field);
+    renumberRows();
+  }
+
+  document.getElementById('addFieldBtn').addEventListener('click', function(){
+    addField('field_' + (fields.length + 1), '');
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', function(){
+    fields = [];
+    fieldsContainer.innerHTML = '';
+    addField('field_1', '');
+    clearOutput();
+  });
+
+  // delimiter UI wiring
+  var delimRadios = document.querySelectorAll('input[name="delim"]');
+  var customDelimInput = document.getElementById('customDelim');
+  delimRadios.forEach(function(r){
+    r.addEventListener('change', function(){
+      customDelimInput.disabled = (currentDelimMode() !== 'custom');
+      recountAll();
+    });
+  });
+  customDelimInput.addEventListener('input', function(){
+    if (currentDelimMode() === 'custom') recountAll();
+  });
+
+  var idEnabled = document.getElementById('idEnabled');
+  var idKeyInput = document.getElementById('idKey');
+  var idStartInput = document.getElementById('idStart');
+  function syncIdInputs(){
+    idKeyInput.disabled = !idEnabled.checked;
+    idStartInput.disabled = !idEnabled.checked;
+  }
+  idEnabled.addEventListener('change', syncIdInputs);
+  syncIdInputs();
+
+  function showError(msg){
+    document.getElementById('errorBanner').innerHTML =
+      '<div class="error-banner">' + escapeHtml(msg) + '</div>';
+  }
+  function clearError(){
+    document.getElementById('errorBanner').innerHTML = '';
+  }
+  function showWarning(msg){
+    document.getElementById('warningBanner').innerHTML =
+      '<div class="warning-banner">' + escapeHtml(msg) + '</div>';
+  }
+  function clearWarning(){
+    document.getElementById('warningBanner').innerHTML = '';
+  }
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  var outputEl = document.getElementById('output');
+  var copyBtn = document.getElementById('copyBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var sealEl = document.getElementById('seal');
+
+  function clearOutput(){
+    outputEl.textContent = '';
+    outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;">ખાલી</p>Your JSON will appear here once generated.</div>';
+    sealEl.textContent = '0';
+    copyBtn.disabled = true;
+    downloadBtn.disabled = true;
+    lastGenerated = '';
+    clearWarning();
+  }
+
+  function generate(){
+    clearError();
+    clearWarning();
+
+    var useId = idEnabled.checked;
+    var idKey = idKeyInput.value.trim() || 'id';
+    var idStart = parseInt(idStartInput.value, 10);
+    if (isNaN(idStart)) idStart = 1;
+
+    var mode = currentDelimMode();
+    var customDelim = currentCustomDelim();
+
+    var keys = fields.map(function(f){ return f.key.trim(); });
+
+    if (keys.some(function(k){ return k.length === 0; })){
+      showError('Every field needs a key name before generating.');
+      return;
+    }
+
+    var allKeys = useId ? keys.concat([idKey]) : keys.slice();
+    var seen = {};
+    var dup = null;
+    for (var i = 0; i < allKeys.length; i++){
+      if (seen[allKeys[i]]){ dup = allKeys[i]; break; }
+      seen[allKeys[i]] = true;
+    }
+    if (dup){
+      showError('The key "' + dup + '" is used more than once. Field keys (and the ID key) must be unique.');
+      return;
+    }
+
+    var entriesPerField = fields.map(function(f){
+      return { key: f.key.trim(), entries: splitEntries(f.content, mode, customDelim) };
+    });
+
+    var maxLen = 0;
+    entriesPerField.forEach(function(ef){ if (ef.entries.length > maxLen) maxLen = ef.entries.length; });
+
+    if (maxLen === 0){
+      showError('Paste or upload some content into at least one field first.');
+      return;
+    }
+
+    var result = [];
+    for (var i2 = 0; i2 < maxLen; i2++){
+      var obj = {};
+      if (useId) obj[idKey] = idStart + i2;
+      entriesPerField.forEach(function(ef){
+        obj[ef.key] = ef.entries[i2] !== undefined ? ef.entries[i2] : '';
+      });
+      result.push(obj);
+    }
+
+    var mismatches = entriesPerField.filter(function(ef){ return ef.entries.length !== maxLen; });
+    if (mismatches.length){
+      var msg = 'Entry count mismatch — ' +
+        mismatches.map(function(ef){ return '"' + ef.key + '" has ' + ef.entries.length; }).join(', ') +
+        ', but the longest field has ' + maxLen + '. Missing values were filled with "".';
+      showWarning(msg);
+    }
+
+    lastGenerated = JSON.stringify(result, null, 2);
+    outputEl.textContent = lastGenerated;
+    outputEl.classList.remove('fade-in');
+    void outputEl.offsetWidth;
+    outputEl.classList.add('fade-in');
+    sealEl.textContent = String(maxLen);
+    copyBtn.disabled = false;
+    downloadBtn.disabled = false;
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', generate);
+
+  copyBtn.addEventListener('click', function(){
+    if (!lastGenerated) return;
+    var done = function(){
+      var original = copyBtn.innerHTML;
+      copyBtn.innerHTML = 'Copied';
+      setTimeout(function(){ copyBtn.innerHTML = original; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(lastGenerated).then(done).catch(function(){
+        fallbackCopy();
+      });
+    } else {
+      fallbackCopy();
+    }
+    function fallbackCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = lastGenerated;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+
+  downloadBtn.addEventListener('click', function(){
+    if (!lastGenerated) return;
+    var filenameInput = document.getElementById('filename');
+    var name = (filenameInput.value || 'data.json').trim();
+    if (!/\.json$/i.test(name)) name += '.json';
+    name = name.replace(/[\\/:*?"<>|]/g, '_');
+
+    var blob = new Blob([lastGenerated], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  // ---------- init with demo data ----------
+  addField('sanskritText', demoSanskrit.join('\n\n'));
+  addField('gujaratiMeaning', demoGujarati.join('\n\n'));
+  addField('englishMeaning', demoEnglish.join('\n\n'));
+  clearOutput();
+
+})();
+</script>
+</body>
+</html>
