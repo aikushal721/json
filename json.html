@@ -17,6 +17,8 @@
     --maroon-dark: #5C1620;
     --gold: #B6862C;
     --gold-soft: #E8D5A3;
+    --teal: #2E6B63;
+    --teal-soft: #D9EAE6;
     --error: #AE3A2E;
     --line: #E2D3AE;
     --radius: 10px;
@@ -43,346 +45,183 @@
   a{ color: inherit; }
 
   /* ---------- Header ---------- */
-  header.app-head{
-    max-width: 1180px;
-    margin: 0 auto 28px auto;
-  }
+  header.app-head{ max-width: 1180px; margin: 0 auto 28px auto; }
 
   .eyebrow{
     font-family: 'Noto Sans Gujarati', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    color: var(--gold);
-    font-weight: 600;
-    text-transform: uppercase;
-    margin: 0 0 6px 0;
+    font-size: 13px; letter-spacing: 0.08em; color: var(--gold);
+    font-weight: 600; text-transform: uppercase; margin: 0 0 6px 0;
   }
 
   h1.title{
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-    font-size: clamp(28px, 4vw, 40px);
-    margin: 0 0 8px 0;
-    color: var(--ink);
-    letter-spacing: 0.01em;
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px 0;
+    color: var(--ink); letter-spacing: 0.01em;
   }
 
   p.subtitle{
-    font-size: 14.5px;
-    color: var(--ink-soft);
-    margin: 0 0 18px 0;
-    max-width: 640px;
-    line-height: 1.5;
+    font-size: 14.5px; color: var(--ink-soft); margin: 0 0 18px 0;
+    max-width: 680px; line-height: 1.5;
   }
 
   .steps{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 0;
-    align-items: center;
-    font-size: 13px;
-    color: var(--ink-soft);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; gap: 6px 0; align-items: center;
+    font-size: 13px; color: var(--ink-soft);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
     padding: 10px 0;
   }
   .steps .step{ display:flex; align-items:center; gap:8px; padding: 0 14px; }
-  .steps .num{
-    font-family: 'Noto Sans Gujarati', sans-serif;
-    color: var(--maroon);
-    font-weight: 700;
-    font-size: 14px;
-  }
+  .steps .num{ font-family: 'Noto Sans Gujarati', sans-serif; color: var(--maroon); font-weight: 700; font-size: 14px; }
   .steps .arrow{ color: var(--gold); opacity: 0.7; }
 
   /* ---------- Layout ---------- */
   main.layout{
-    max-width: 1180px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 22px;
-    align-items: start;
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 22px; align-items: start;
   }
-
-  @media (max-width: 880px){
-    main.layout{ grid-template-columns: 1fr; }
-  }
+  @media (max-width: 880px){ main.layout{ grid-template-columns: 1fr; } }
 
   .panel{
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 20px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 20px;
   }
-
   .panel h2{
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0 0 14px 0;
-    display:flex;
-    align-items: center;
-    gap: 8px;
+    font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600;
+    margin: 0 0 14px 0; display:flex; align-items: center; gap: 8px;
   }
 
-  /* ---------- Config strip (delimiter + id) ---------- */
-  .config-grid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  @media (max-width: 520px){ .config-grid{ grid-template-columns: 1fr; } }
-
+  /* ---------- Config strip ---------- */
   .config-box{
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px 14px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;
   }
   .config-box .label-row{
-    display:flex; align-items:center; justify-content: space-between;
     font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
-    text-transform: uppercase; letter-spacing: 0.04em;
-    margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
   }
-
-  .radio-line{ display:flex; align-items:center; gap:7px; font-size: 13.5px; margin-bottom: 6px; color: var(--ink); }
+  .config-row{ display:flex; flex-wrap: wrap; gap: 14px 24px; align-items: flex-end; }
+  .radio-line{ display:flex; align-items:center; gap:7px; font-size: 13.5px; color: var(--ink); white-space: nowrap; }
   .radio-line input{ accent-color: var(--maroon); }
-  .mini-input{
-    width: 100%;
-    margin-top: 4px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-  }
+  .field-block{ min-width: 160px; }
+  .field-block label{ font-size: 11px; color: var(--ink-soft); display:block; margin-bottom: 3px; }
+  .help-text{ font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
 
-  .id-row{ display:flex; align-items:center; gap: 8px; font-size: 13.5px; margin-bottom: 8px; }
-  .id-row input[type=checkbox]{ accent-color: var(--maroon); width: 15px; height: 15px; }
-  .id-fields{ display:flex; gap: 8px; }
-  .id-fields > div{ flex:1; }
-  .id-fields label{ font-size: 11px; color: var(--ink-soft); display:block; margin-bottom: 3px; }
-
-  input[type=text], input[type=number]{
-    width: 100%;
-    padding: 7px 9px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: #fff;
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
+  input[type=text], input[type=number], select{
+    width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px;
+    background: #fff; color: var(--ink); font-family: 'Inter', sans-serif; font-size: 13.5px;
   }
-  input:focus-visible, textarea:focus-visible, button:focus-visible{
-    outline: 2px solid var(--gold);
-    outline-offset: 2px;
+  select{ cursor: pointer; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible, select:focus-visible{
+    outline: 2px solid var(--gold); outline-offset: 2px;
   }
   input:disabled{ opacity: 0.45; }
+  .mini-input{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
 
   /* ---------- Field rows ---------- */
   #fieldsContainer{ display:flex; flex-direction: column; gap: 12px; }
 
   .field-row{
-    display:flex;
-    gap: 10px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--surface-2);
-    padding: 12px;
+    display:flex; gap: 10px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--surface-2); padding: 12px;
   }
-
   .field-num{
-    font-family: 'Noto Sans Gujarati', sans-serif;
-    font-weight: 700;
-    font-size: 17px;
-    color: var(--maroon);
-    width: 26px;
-    flex-shrink: 0;
-    padding-top: 6px;
-    text-align: center;
+    font-family: 'Noto Sans Gujarati', sans-serif; font-weight: 700; font-size: 17px;
+    color: var(--maroon); width: 26px; flex-shrink: 0; padding-top: 6px; text-align: center;
   }
-
   .field-main{ flex:1; min-width: 0; }
-
-  .field-head{
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-  }
+  .field-head{ display:flex; align-items:center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 
   .field-key{
-    flex: 1 1 140px;
-    min-width: 100px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 500;
-    color: var(--maroon-dark);
-    background: #fff;
+    flex: 1 1 130px; min-width: 90px; font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500; color: var(--maroon-dark); background: #fff;
   }
+  .mode-select{ flex: 0 0 auto; width: auto; min-width: 132px; font-size: 12.8px; }
 
-  .field-count{
-    font-size: 11.5px;
-    color: var(--ink-soft);
-    white-space: nowrap;
-    padding: 2px 8px;
-    background: var(--gold-soft);
-    border-radius: 20px;
-    font-weight: 600;
+  .badge{
+    font-size: 11.5px; white-space: nowrap; padding: 2px 9px; border-radius: 20px;
+    font-weight: 600; max-width: 220px; overflow: hidden; text-overflow: ellipsis;
   }
+  .badge-entry{ background: var(--gold-soft); color: #6B4E16; }
+  .badge-const{ background: var(--teal-soft); color: var(--teal); }
+  .badge-auto{ background: #F1DCE0; color: var(--maroon-dark); font-family: 'IBM Plex Mono', monospace; }
 
   .icon-btn{
-    width: 28px; height: 28px;
-    display:flex; align-items:center; justify-content:center;
-    border-radius: 6px;
-    border: 1px solid var(--line);
-    background: #fff;
-    cursor: pointer;
-    color: var(--ink-soft);
-    flex-shrink: 0;
-    transition: background .15s ease, color .15s ease, border-color .15s ease;
+    width: 28px; height: 28px; display:flex; align-items:center; justify-content:center;
+    border-radius: 6px; border: 1px solid var(--line); background: #fff; cursor: pointer;
+    color: var(--ink-soft); flex-shrink: 0; transition: background .15s ease, color .15s ease, border-color .15s ease;
   }
   .icon-btn:hover{ background: var(--gold-soft); color: var(--maroon-dark); border-color: var(--gold); }
   .icon-btn svg{ width: 15px; height: 15px; }
   .icon-btn.danger:hover{ background: #F4DAD6; color: var(--error); border-color: var(--error); }
 
   textarea.field-content{
-    width: 100%;
-    min-height: 96px;
-    resize: vertical;
-    padding: 9px 10px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: #fff;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.8px;
-    line-height: 1.55;
-    color: var(--ink);
+    width: 100%; min-height: 96px; resize: vertical; padding: 9px 10px;
+    border: 1px solid var(--line); border-radius: 6px; background: #fff;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.8px; line-height: 1.55; color: var(--ink);
   }
 
-  .row-actions{
-    display:flex; align-items:center; justify-content: space-between;
-    margin-top: 14px;
+  .const-input{
+    width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: #fff; font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--ink);
   }
+
+  .auto-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 560px){ .auto-grid{ grid-template-columns: 1fr 1fr; } }
+  .auto-grid label{ font-size: 10.5px; color: var(--ink-soft); display:block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
+  .auto-grid input{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+
+  .row-actions{ display:flex; align-items:center; justify-content: space-between; margin-top: 14px; }
 
   .btn{
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 13.5px;
-    padding: 9px 16px;
-    border-radius: 7px;
-    border: 1px solid var(--line);
-    background: #fff;
-    color: var(--ink);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13.5px; padding: 9px 16px;
+    border-radius: 7px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
     transition: transform .12s ease, background .15s ease, border-color .15s ease;
   }
   .btn:hover{ border-color: var(--gold); background: var(--surface-2); }
   .btn:active{ transform: translateY(1px); }
   .btn svg{ width: 15px; height: 15px; }
-
   .btn-ghost{ background: transparent; border-color: transparent; color: var(--ink-soft); padding: 9px 8px; }
   .btn-ghost:hover{ background: var(--surface-2); color: var(--ink); }
 
   .btn-primary{
-    background: var(--maroon);
-    border-color: var(--maroon);
-    color: #FBF1DE;
-    width: 100%;
-    justify-content: center;
-    padding: 13px 16px;
-    font-size: 15px;
-    margin-top: 16px;
+    background: var(--maroon); border-color: var(--maroon); color: #FBF1DE;
+    width: 100%; justify-content: center; padding: 13px 16px; font-size: 15px; margin-top: 16px;
   }
   .btn-primary:hover{ background: var(--maroon-dark); border-color: var(--maroon-dark); }
   .btn-primary:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
 
   /* ---------- Output panel ---------- */
-  .output-head{
-    display:flex; align-items:center; justify-content: space-between; gap: 10px;
-    margin-bottom: 12px;
-  }
-
+  .output-head{ display:flex; align-items:center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
   .seal{
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    border: 2px solid var(--maroon);
-    background: var(--gold-soft);
-    display:flex; align-items:center; justify-content:center;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--maroon-dark);
-    flex-shrink: 0;
+    width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--maroon);
+    background: var(--gold-soft); display:flex; align-items:center; justify-content:center;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px;
+    color: var(--maroon-dark); flex-shrink: 0;
   }
 
-  .output-actions{ display:flex; gap: 8px; }
-
-  .output-frame{
-    border: 1px solid var(--gold);
-    border-radius: 8px;
-    background: var(--surface-2);
-    position: relative;
-    overflow: hidden;
-  }
-  .output-frame::before{
-    content:"";
-    display:block;
-    height: 3px;
-    background: linear-gradient(90deg, var(--maroon), var(--gold));
-  }
+  .output-frame{ border: 1px solid var(--gold); border-radius: 8px; background: var(--surface-2); position: relative; overflow: hidden; }
+  .output-frame::before{ content:""; display:block; height: 3px; background: linear-gradient(90deg, var(--maroon), var(--gold)); }
 
   pre#output{
-    margin: 0;
-    padding: 16px;
-    max-height: 480px;
-    overflow: auto;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
-    line-height: 1.6;
-    color: var(--ink);
-    white-space: pre-wrap;
-    word-break: break-word;
+    margin: 0; padding: 16px; max-height: 480px; overflow: auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.6;
+    color: var(--ink); white-space: pre-wrap; word-break: break-word;
   }
-
-  .empty-state{
-    padding: 40px 16px;
-    text-align: center;
-    color: var(--ink-soft);
-    font-size: 13.5px;
-  }
+  .empty-state{ padding: 40px 16px; text-align: center; color: var(--ink-soft); font-size: 13.5px; }
   .empty-state .eyebrow{ margin-bottom: 4px; }
 
-  .warning-banner, .error-banner{
-    font-size: 12.8px;
-    padding: 9px 12px;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    line-height: 1.5;
-  }
+  .warning-banner, .error-banner{ font-size: 12.8px; padding: 9px 12px; border-radius: 6px; margin-bottom: 12px; line-height: 1.5; }
   .warning-banner{ background: #FBF0DC; border: 1px solid var(--gold); color: #6B4E16; }
   .error-banner{ background: #FBE2DE; border: 1px solid var(--error); color: var(--error); font-weight: 600; }
 
-  .download-bar{
-    display:flex; gap: 8px; margin-top: 14px;
-  }
+  .download-bar{ display:flex; gap: 8px; margin-top: 14px; }
   .download-bar input{ flex:1; }
 
-  footer.note{
-    max-width: 1180px;
-    margin: 18px auto 0 auto;
-    font-size: 12px;
-    color: var(--ink-soft);
-    text-align: center;
-  }
+  footer.note{ max-width: 1180px; margin: 18px auto 0 auto; font-size: 12px; color: var(--ink-soft); text-align: center; }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ transition: none !important; animation: none !important; }
-  }
-
+  @media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }
   @keyframes fadeIn{ from{ opacity:0; transform: translateY(3px);} to{ opacity:1; transform:none; } }
   .fade-in{ animation: fadeIn .25s ease; }
 </style>
@@ -392,11 +231,11 @@
 <header class="app-head">
   <p class="eyebrow">પાઠ સંગ્રહ — Text Collection Tool</p>
   <h1 class="title">Shlok JSON Builder</h1>
-  <p class="subtitle">Paste or upload your Sanskrit, Gujarati, English (or any) text files as separate fields, name each field, and combine them into one structured JSON file — no coding required.</p>
+  <p class="subtitle">Paste or upload separate text files as fields, name each one, and combine them into one structured JSON file. Each field can hold one value per entry, the same value repeated for every entry, or an auto-incrementing number — no coding required.</p>
   <div class="steps">
     <span class="step"><span class="num">૧</span> Add your fields</span>
     <span class="arrow">→</span>
-    <span class="step"><span class="num">૨</span> Paste or upload text per field</span>
+    <span class="step"><span class="num">૨</span> Choose how each one fills in</span>
     <span class="arrow">→</span>
     <span class="step"><span class="num">૩</span> Generate JSON</span>
     <span class="arrow">→</span>
@@ -410,32 +249,17 @@
   <section class="panel">
     <h2>Fields</h2>
 
-    <div class="config-grid">
-      <div class="config-box">
-        <div class="label-row">Entry separator</div>
-        <label class="radio-line">
-          <input type="radio" name="delim" value="blank" checked> Blank line between entries
-        </label>
-        <label class="radio-line">
-          <input type="radio" name="delim" value="custom"> Custom separator
-        </label>
-        <input type="text" id="customDelim" class="mini-input" value="---" disabled placeholder="e.g. ---">
-      </div>
-
-      <div class="config-box">
-        <div class="label-row">Auto ID</div>
-        <label class="id-row">
-          <input type="checkbox" id="idEnabled" checked> Add an auto-incrementing ID field
-        </label>
-        <div class="id-fields">
-          <div>
-            <label for="idKey">Key name</label>
-            <input type="text" id="idKey" value="id">
-          </div>
-          <div>
-            <label for="idStart">Start at</label>
-            <input type="number" id="idStart" value="1">
-          </div>
+    <div class="config-box">
+      <div class="label-row">Entry separator (for "Per entry" fields)</div>
+      <div class="config-row">
+        <label class="radio-line"><input type="radio" name="delim" value="blank" checked> Blank line between entries</label>
+        <label class="radio-line"><input type="radio" name="delim" value="custom"> Custom separator</label>
+        <div class="field-block" style="max-width:140px;">
+          <input type="text" id="customDelim" class="mini-input" value="---" disabled placeholder="e.g. ---">
+        </div>
+        <div class="field-block" style="max-width:170px;">
+          <label for="fallbackCount">Entries if none are "Per entry"</label>
+          <input type="number" id="fallbackCount" min="1" value="1">
         </div>
       </div>
     </div>
@@ -551,19 +375,12 @@
   var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
   var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
 
-  function countEntries(text, mode, customDelim){
-    return splitEntries(text, mode, customDelim).length;
-  }
-
   function splitEntries(text, mode, customDelim){
     if (!text) return [];
     var t = text.replace(/\r\n/g, '\n');
     var parts;
-    if (mode === 'custom' && customDelim) {
-      parts = t.split(customDelim);
-    } else {
-      parts = t.split(/\n[ \t]*\n+/);
-    }
+    if (mode === 'custom' && customDelim) parts = t.split(customDelim);
+    else parts = t.split(/\n[ \t]*\n+/);
     return parts.map(function(p){ return p.trim(); }).filter(function(p){ return p.length > 0; });
   }
 
@@ -571,25 +388,9 @@
     var checked = document.querySelector('input[name="delim"]:checked');
     return checked ? checked.value : 'blank';
   }
-  function currentCustomDelim(){
-    return document.getElementById('customDelim').value || '---';
-  }
+  function currentCustomDelim(){ return document.getElementById('customDelim').value || '---'; }
 
-  function updateRowCount(field, rowEl){
-    var n = countEntries(field.content, currentDelimMode(), currentCustomDelim());
-    var badge = rowEl.querySelector('.field-count');
-    badge.textContent = n + (n === 1 ? ' entry' : ' entries');
-  }
-
-  function recountAll(){
-    var rows = fieldsContainer.querySelectorAll('.field-row');
-    rows.forEach(function(rowEl){
-      var id = rowEl.getAttribute('data-field-id');
-      var field = fields.find(function(f){ return f.id === id; });
-      if (field) updateRowCount(field, rowEl);
-    });
-  }
-
+  // ---------- field row rendering ----------
   function appendFieldRow(field){
     var row = document.createElement('div');
     row.className = 'field-row';
@@ -597,7 +398,6 @@
 
     var num = document.createElement('div');
     num.className = 'field-num';
-    num.textContent = toGujNum(fields.length);
 
     var main = document.createElement('div');
     main.className = 'field-main';
@@ -609,15 +409,24 @@
     keyInput.type = 'text';
     keyInput.className = 'field-key';
     keyInput.value = field.key;
-    keyInput.setAttribute('aria-label', 'Field key name');
     keyInput.placeholder = 'key name';
-    keyInput.addEventListener('input', function(){
-      field.key = keyInput.value;
+    keyInput.setAttribute('aria-label', 'Field key name');
+    keyInput.addEventListener('input', function(){ field.key = keyInput.value; });
+
+    var modeSelect = document.createElement('select');
+    modeSelect.className = 'mode-select';
+    modeSelect.innerHTML =
+      '<option value="entry">Per entry</option>' +
+      '<option value="const">Same for all</option>' +
+      '<option value="auto">Auto-increment</option>';
+    modeSelect.value = field.mode;
+    modeSelect.addEventListener('change', function(){
+      field.mode = modeSelect.value;
+      renderBody();
     });
 
-    var countBadge = document.createElement('span');
-    countBadge.className = 'field-count';
-    countBadge.textContent = '0 entries';
+    var badge = document.createElement('span');
+    badge.className = 'badge';
 
     var uploadBtn = document.createElement('button');
     uploadBtn.type = 'button';
@@ -629,17 +438,14 @@
     fileInput.type = 'file';
     fileInput.accept = '.txt,text/plain';
     fileInput.hidden = true;
-
     uploadBtn.addEventListener('click', function(){ fileInput.click(); });
     fileInput.addEventListener('change', function(){
       var file = fileInput.files && fileInput.files[0];
       if (!file) return;
       var reader = new FileReader();
       reader.onload = function(e){
-        var text = String(e.target.result || '');
-        textarea.value = text;
-        field.content = text;
-        updateRowCount(field, row);
+        field.content = String(e.target.result || '');
+        renderBody();
       };
       reader.readAsText(file);
       fileInput.value = '';
@@ -651,38 +457,99 @@
     removeBtn.title = 'Remove this field';
     removeBtn.innerHTML = ICON_TRASH;
     removeBtn.addEventListener('click', function(){
-      if (fields.length <= 1){
-        showError('At least one field is needed.');
-        return;
-      }
+      if (fields.length <= 1){ showError('At least one field is needed.'); return; }
       fields = fields.filter(function(f){ return f.id !== field.id; });
       row.remove();
       renumberRows();
     });
 
     head.appendChild(keyInput);
-    head.appendChild(countBadge);
+    head.appendChild(modeSelect);
+    head.appendChild(badge);
     head.appendChild(uploadBtn);
     head.appendChild(fileInput);
     head.appendChild(removeBtn);
 
-    var textarea = document.createElement('textarea');
-    textarea.className = 'field-content';
-    textarea.placeholder = 'Paste content here. Separate each entry with a blank line.';
-    textarea.value = field.content;
-    textarea.addEventListener('input', function(){
-      field.content = textarea.value;
-      updateRowCount(field, row);
-    });
+    var body = document.createElement('div');
 
     main.appendChild(head);
-    main.appendChild(textarea);
-
+    main.appendChild(body);
     row.appendChild(num);
     row.appendChild(main);
-
     fieldsContainer.appendChild(row);
-    updateRowCount(field, row);
+
+    function renderBody(){
+      body.innerHTML = '';
+      uploadBtn.style.display = (field.mode === 'entry') ? 'flex' : 'none';
+
+      if (field.mode === 'entry'){
+        var textarea = document.createElement('textarea');
+        textarea.className = 'field-content';
+        textarea.placeholder = 'Paste content here. Separate each entry with a blank line.';
+        textarea.value = field.content;
+        textarea.addEventListener('input', function(){
+          field.content = textarea.value;
+          updateBadge();
+        });
+        body.appendChild(textarea);
+      } else if (field.mode === 'const'){
+        var constInput = document.createElement('input');
+        constInput.type = 'text';
+        constInput.className = 'const-input';
+        constInput.placeholder = 'Type the one value to use for every entry';
+        constInput.value = field.content;
+        constInput.addEventListener('input', function(){
+          field.content = constInput.value;
+          updateBadge();
+        });
+        body.appendChild(constInput);
+      } else if (field.mode === 'auto'){
+        var grid = document.createElement('div');
+        grid.className = 'auto-grid';
+
+        function autoBox(labelText, value, onInput, ph){
+          var wrap = document.createElement('div');
+          var lbl = document.createElement('label');
+          lbl.textContent = labelText;
+          var inp = document.createElement('input');
+          inp.type = (labelText === 'Start' || labelText === 'Step') ? 'number' : 'text';
+          inp.value = value;
+          if (ph) inp.placeholder = ph;
+          inp.addEventListener('input', function(){ onInput(inp.value); updateBadge(); });
+          wrap.appendChild(lbl);
+          wrap.appendChild(inp);
+          return wrap;
+        }
+
+        grid.appendChild(autoBox('Start', field.start, function(v){ field.start = parseInt(v,10); if(isNaN(field.start)) field.start = 1; }));
+        grid.appendChild(autoBox('Step', field.step, function(v){ field.step = parseInt(v,10); if(isNaN(field.step)) field.step = 1; }));
+        grid.appendChild(autoBox('Prefix', field.prefix, function(v){ field.prefix = v; }, 'e.g. ગ.પ્ર.'));
+        grid.appendChild(autoBox('Suffix', field.suffix, function(v){ field.suffix = v; }, 'optional'));
+
+        body.appendChild(grid);
+      }
+      updateBadge();
+    }
+
+    function updateBadge(){
+      if (field.mode === 'entry'){
+        var n = splitEntries(field.content, currentDelimMode(), currentCustomDelim()).length;
+        badge.className = 'badge badge-entry';
+        badge.textContent = n + (n === 1 ? ' entry' : ' entries');
+      } else if (field.mode === 'const'){
+        badge.className = 'badge badge-const';
+        var v = (field.content || '').trim();
+        badge.textContent = v ? ('all = "' + (v.length > 18 ? v.slice(0,18) + '…' : v) + '"') : 'same for all (empty)';
+      } else if (field.mode === 'auto'){
+        badge.className = 'badge badge-auto';
+        var s = field.start, st = field.step, p = field.prefix || '', sf = field.suffix || '';
+        badge.textContent = (p + s + sf) + ', ' + (p + (s+st) + sf) + ', ' + (p + (s+st*2) + sf) + ' …';
+      }
+    }
+
+    row._renderBody = renderBody;
+    row._updateBadge = updateBadge;
+    renderBody();
   }
 
   function renumberRows(){
@@ -692,66 +559,59 @@
     });
   }
 
-  function addField(key, content){
-    var field = { id: uid(), key: key, content: content || '' };
+  function recountAllEntryBadges(){
+    var rows = fieldsContainer.querySelectorAll('.field-row');
+    rows.forEach(function(rowEl){
+      var id = rowEl.getAttribute('data-field-id');
+      var field = fields.find(function(f){ return f.id === id; });
+      if (field && rowEl._updateBadge) rowEl._updateBadge();
+    });
+  }
+
+  function addField(opts){
+    var field = {
+      id: uid(),
+      key: opts.key || ('field_' + (fields.length + 1)),
+      mode: opts.mode || 'entry',
+      content: opts.content || '',
+      start: opts.start != null ? opts.start : 1,
+      step: opts.step != null ? opts.step : 1,
+      prefix: opts.prefix || '',
+      suffix: opts.suffix || ''
+    };
     fields.push(field);
     appendFieldRow(field);
     renumberRows();
   }
 
   document.getElementById('addFieldBtn').addEventListener('click', function(){
-    addField('field_' + (fields.length + 1), '');
+    addField({ mode: 'entry' });
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', function(){
     fields = [];
     fieldsContainer.innerHTML = '';
-    addField('field_1', '');
+    addField({ key: 'field_1', mode: 'entry' });
     clearOutput();
   });
 
-  // delimiter UI wiring
   var delimRadios = document.querySelectorAll('input[name="delim"]');
   var customDelimInput = document.getElementById('customDelim');
   delimRadios.forEach(function(r){
     r.addEventListener('change', function(){
       customDelimInput.disabled = (currentDelimMode() !== 'custom');
-      recountAll();
+      recountAllEntryBadges();
     });
   });
   customDelimInput.addEventListener('input', function(){
-    if (currentDelimMode() === 'custom') recountAll();
+    if (currentDelimMode() === 'custom') recountAllEntryBadges();
   });
 
-  var idEnabled = document.getElementById('idEnabled');
-  var idKeyInput = document.getElementById('idKey');
-  var idStartInput = document.getElementById('idStart');
-  function syncIdInputs(){
-    idKeyInput.disabled = !idEnabled.checked;
-    idStartInput.disabled = !idEnabled.checked;
-  }
-  idEnabled.addEventListener('change', syncIdInputs);
-  syncIdInputs();
-
-  function showError(msg){
-    document.getElementById('errorBanner').innerHTML =
-      '<div class="error-banner">' + escapeHtml(msg) + '</div>';
-  }
-  function clearError(){
-    document.getElementById('errorBanner').innerHTML = '';
-  }
-  function showWarning(msg){
-    document.getElementById('warningBanner').innerHTML =
-      '<div class="warning-banner">' + escapeHtml(msg) + '</div>';
-  }
-  function clearWarning(){
-    document.getElementById('warningBanner').innerHTML = '';
-  }
-  function escapeHtml(s){
-    var d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-  }
+  function showError(msg){ document.getElementById('errorBanner').innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>'; }
+  function clearError(){ document.getElementById('errorBanner').innerHTML = ''; }
+  function showWarning(msg){ document.getElementById('warningBanner').innerHTML = '<div class="warning-banner">' + escapeHtml(msg) + '</div>'; }
+  function clearWarning(){ document.getElementById('warningBanner').innerHTML = ''; }
+  function escapeHtml(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
   var outputEl = document.getElementById('output');
   var copyBtn = document.getElementById('copyBtn');
@@ -759,7 +619,6 @@
   var sealEl = document.getElementById('seal');
 
   function clearOutput(){
-    outputEl.textContent = '';
     outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;">ખાલી</p>Your JSON will appear here once generated.</div>';
     sealEl.textContent = '0';
     copyBtn.disabled = true;
@@ -772,60 +631,64 @@
     clearError();
     clearWarning();
 
-    var useId = idEnabled.checked;
-    var idKey = idKeyInput.value.trim() || 'id';
-    var idStart = parseInt(idStartInput.value, 10);
-    if (isNaN(idStart)) idStart = 1;
-
     var mode = currentDelimMode();
     var customDelim = currentCustomDelim();
 
     var keys = fields.map(function(f){ return f.key.trim(); });
-
     if (keys.some(function(k){ return k.length === 0; })){
       showError('Every field needs a key name before generating.');
       return;
     }
-
-    var allKeys = useId ? keys.concat([idKey]) : keys.slice();
-    var seen = {};
-    var dup = null;
-    for (var i = 0; i < allKeys.length; i++){
-      if (seen[allKeys[i]]){ dup = allKeys[i]; break; }
-      seen[allKeys[i]] = true;
+    var seen = {}, dup = null;
+    for (var i = 0; i < keys.length; i++){
+      if (seen[keys[i]]){ dup = keys[i]; break; }
+      seen[keys[i]] = true;
     }
     if (dup){
-      showError('The key "' + dup + '" is used more than once. Field keys (and the ID key) must be unique.');
+      showError('The key "' + dup + '" is used more than once. Field keys must be unique.');
       return;
     }
 
-    var entriesPerField = fields.map(function(f){
+    var entryFields = fields.filter(function(f){ return f.mode === 'entry'; });
+    var entryData = entryFields.map(function(f){
       return { key: f.key.trim(), entries: splitEntries(f.content, mode, customDelim) };
     });
 
     var maxLen = 0;
-    entriesPerField.forEach(function(ef){ if (ef.entries.length > maxLen) maxLen = ef.entries.length; });
+    entryData.forEach(function(ef){ if (ef.entries.length > maxLen) maxLen = ef.entries.length; });
 
+    var usedFallback = false;
     if (maxLen === 0){
-      showError('Paste or upload some content into at least one field first.');
-      return;
+      var fb = parseInt(document.getElementById('fallbackCount').value, 10);
+      if (isNaN(fb) || fb < 1) fb = 1;
+      maxLen = fb;
+      usedFallback = true;
     }
 
     var result = [];
-    for (var i2 = 0; i2 < maxLen; i2++){
+    for (var n = 0; n < maxLen; n++){
       var obj = {};
-      if (useId) obj[idKey] = idStart + i2;
-      entriesPerField.forEach(function(ef){
-        obj[ef.key] = ef.entries[i2] !== undefined ? ef.entries[i2] : '';
+      fields.forEach(function(f){
+        var k = f.key.trim();
+        if (f.mode === 'entry'){
+          var ef = entryData.find(function(e){ return e.key === k; });
+          obj[k] = (ef && ef.entries[n] !== undefined) ? ef.entries[n] : '';
+        } else if (f.mode === 'const'){
+          obj[k] = (f.content || '').trim();
+        } else if (f.mode === 'auto'){
+          var num = f.start + n * f.step;
+          if (f.prefix || f.suffix) obj[k] = (f.prefix || '') + num + (f.suffix || '');
+          else obj[k] = num;
+        }
       });
       result.push(obj);
     }
 
-    var mismatches = entriesPerField.filter(function(ef){ return ef.entries.length !== maxLen; });
-    if (mismatches.length){
+    var mismatches = entryData.filter(function(ef){ return ef.entries.length !== maxLen; });
+    if (mismatches.length && !usedFallback){
       var msg = 'Entry count mismatch — ' +
         mismatches.map(function(ef){ return '"' + ef.key + '" has ' + ef.entries.length; }).join(', ') +
-        ', but the longest field has ' + maxLen + '. Missing values were filled with "".';
+        ', but the longest "Per entry" field has ' + maxLen + '. Missing values were filled with "".';
       showWarning(msg);
     }
 
@@ -849,19 +712,13 @@
       setTimeout(function(){ copyBtn.innerHTML = original; }, 1400);
     };
     if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(lastGenerated).then(done).catch(function(){
-        fallbackCopy();
-      });
-    } else {
-      fallbackCopy();
-    }
+      navigator.clipboard.writeText(lastGenerated).then(done).catch(fallbackCopy);
+    } else { fallbackCopy(); }
     function fallbackCopy(){
       var ta = document.createElement('textarea');
       ta.value = lastGenerated;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
       try { document.execCommand('copy'); done(); } catch(e){}
       document.body.removeChild(ta);
     }
@@ -877,18 +734,16 @@
     var blob = new Blob([lastGenerated], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   });
 
-  // ---------- init with demo data ----------
-  addField('sanskritText', demoSanskrit.join('\n\n'));
-  addField('gujaratiMeaning', demoGujarati.join('\n\n'));
-  addField('englishMeaning', demoEnglish.join('\n\n'));
+  // ---------- init ----------
+  addField({ key: 'id', mode: 'auto', start: 1, step: 1 });
+  addField({ key: 'sanskritText', mode: 'entry', content: demoSanskrit.join('\n\n') });
+  addField({ key: 'gujaratiMeaning', mode: 'entry', content: demoGujarati.join('\n\n') });
+  addField({ key: 'englishMeaning', mode: 'entry', content: demoEnglish.join('\n\n') });
   clearOutput();
 
 })();
