@@ -154,6 +154,22 @@
   .icon-btn:hover{ background: var(--gold-soft); color: var(--maroon-dark); border-color: var(--gold); }
   .icon-btn svg{ width: 15px; height: 15px; }
   .icon-btn.danger:hover{ background: #F4DAD6; color: var(--error); border-color: var(--error); }
+  .icon-btn:disabled{ opacity: 0.35; cursor: not-allowed; }
+  .icon-btn:disabled:hover{ background: #fff; color: var(--ink-soft); border-color: var(--line); }
+
+  .reorder-controls{ display:flex; align-items:center; gap: 3px; flex-shrink: 0; }
+  .drag-handle{
+    width: 22px; height: 28px; display:flex; align-items:center; justify-content:center;
+    cursor: grab; color: var(--ink-soft); border-radius: 6px; flex-shrink: 0;
+  }
+  .drag-handle:hover{ background: var(--gold-soft); color: var(--maroon-dark); }
+  .drag-handle:active{ cursor: grabbing; }
+  .drag-handle svg{ width: 15px; height: 15px; }
+  .move-stack{ display:flex; flex-direction: column; gap: 1px; }
+  .move-btn{ width: 20px; height: 13px; padding:0; }
+  .move-btn svg{ width: 11px; height: 11px; }
+
+  .field-row.dragging{ opacity: 0.4; border-style: dashed; border-color: var(--gold); }
 
   textarea.field-content{
     width: 100%; min-height: 96px; resize: vertical; padding: 9px 10px;
@@ -219,7 +235,8 @@
   .download-bar{ display:flex; gap: 8px; margin-top: 14px; }
   .download-bar input{ flex:1; }
 
-  footer.note{ max-width: 1180px; margin: 18px auto 0 auto; font-size: 12px; color: var(--ink-soft); text-align: center; }
+  footer.note{ max-width: 1180px; margin: 18px auto 0 auto; font-size: 12px; color: var(--ink-soft); text-align: center; line-height: 1.7; }
+  footer.note .copyright{ display:block; color: var(--ink-soft); opacity: 0.75; }
 
   @media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }
   @keyframes fadeIn{ from{ opacity:0; transform: translateY(3px);} to{ opacity:1; transform:none; } }
@@ -310,7 +327,9 @@
 
 </main>
 
-<footer class="note">Everything runs in your browser — your text never leaves this page.</footer>
+<footer class="note">
+  <span class="copyright">© Kushal Hirpara 2026. All Rights Reserved.</span>
+</footer>
 
 <script>
 (function(){
@@ -330,50 +349,14 @@
 
   var fieldsContainer = document.getElementById('fieldsContainer');
   var lastGenerated = '';
-
-  // ---------- demo data (Shikshapatri, Shlok 1-10) ----------
-  var demoSanskrit = [
-    "वामे यस्य स्थिता राधा श्रीश्च यस्यास्ति वक्षसि ।\nवृन्दावनविहारं तं श्रीकृष्णं हृदि चिन्तये ।।१।।",
-    "लिखामि सहजानन्द स्वामी सर्वान्निजाश्रितान्‌ । नानादेशस्थितान्‌ शिक्षापत्रीं वृत्तालयस्थित: ।।२।।",
-    "भ्रात्रो रामप्रतापेच्छारामयोर्धर्मजन्मनो: । यावयोध्याप्रसादाख्यरघुवीराभिधौ सुतौ ।।३।।",
-    "मुकुन्दानन्दमुख्याश्च नैष्ठिका ब्रह्मचारिण: । गृहस्थाश्च मयारामभट्टाद्या ये मदाश्रया: ।।४।।",
-    "सधवा विधवा योषा याश्च मच्छिष्यतां गता: । मुक्तानन्दादयो ये स्यु: साधवश्चाखिला अपि ।।५।।",
-    "स्वधर्मरक्षिका मे तै: सर्वैर्वाच्या: सदाशिष: । श्रीमन्नारायणस्मृत्या सहिता: शास्त्रसम्मता: ।।६।।",
-    "एकाग्रेणैव मनसा पत्रीलेख: सहेतुक: । अवधार्योऽयमखिलै: सर्वजीवहितावह: ।।७।।",
-    "ये पालयन्ति मनुजा: सच्छास्त्रप्रतिपादितान्‌ । सदाचारान्‌ सदा तेऽत्र परत्र च महासुखा: ।।८।।",
-    "तानुल्लङ्घयात्र वर्तन्ते ये तु स्वैरं कुबुद्धय: । त इहामुत्र च महल्लभन्ते कष्टमेव हि ।।९।।",
-    "अतो भवद्‌भिर्मच्छिष्यै: सावधानतयाऽखिलै: । प्रीत्यैतामनुसृत्यैव वर्तितव्यं निरन्तरम्‌ ।।१०।।"
-  ];
-
-  var demoGujarati = [
-    "હું જે તે મારા હૃદયને વિષે શ્રીકૃષ્ણ ભગવાનનું ધ્યાન કરૂં છું તે શ્રીકૃષ્ણ કેવા છે, તો – જેના ડાબા પડખાને વિષે રાધિકાજી રહ્યા છે, અને જેના વક્ષ:સ્થળને વિષે લક્ષ્મીજી રહ્યા છે અને વૃન્દાવનને વિષે વિહારના કરનારા છે. ||૧||",
-    "અને વૃત્તાલય ગામને વિષે રહ્યા એવા સહજાનંદ સ્વામી જે અમે, તે અમે જે તે નાના પ્રકારના જે સર્વે દેશ તેમને વિશે રહ્યા એવા જે અમારા આશ્રિત સર્વે સત્સંગી તે પ્રત્યે શિક્ષાપત્રીને લખીએ છીએ. ||૨||",
-    "શ્રી ધર્મદેવ થકી છે જન્મ જેમનો એવા જે અમારા ભાઈ રામપ્રતાપજી તથા ઈચ્છારામજી તેમના પુત્ર જે અયોધ્યાપ્રસાદ નામે અને રઘુવીર નામે (જેને અમે અમારા દત્તપુત્ર કરીને સર્વે સત્સંગીના આચારયપણાને વિષે સ્થાપન કર્યા છે.) ||૩||",
-    "તથા અમારા આશ્રિત એવા જે મુકુંદાનંદ આદિક નૈષ્ઠિક બ્રહ્મચારી તથા અમારા આશ્રિત જે મયારામ ભટ્ટ આદિક ગૃહસ્થ સત્સંગી. ||૪||",
-    "તથા અમારે આશ્રિત જે સુવાસિની અને વિધવા એવી સર્વે બાઈઓ તથા મુક્તાનંદ આદિક જે સર્વે સાધુ. ||૫||",
-    "એ સર્વે-તેમણે પોતાના ધર્મની રક્ષાના કરનારા અને શાસ્ત્રને વિષે પ્રમાણરૂપ અને શ્રીમન્નારાયણની સ્મૃ તિ એ સહિત એવા જે અમારા રૂડા આશીર્વાદ તે વાંચવા. ||૬||",
-    "અને આ શિક્ષાપત્રી લખ્યાનું જે કારણ છે તે સર્વે તેમણે એકાગ્ર મને કરીને ધારવું અને આ શિક્ષાપત્રી જે અમે લખી છે, તે સર્વેના જીવને હિતની કરનારી છે. ||૭||",
-    "અને શ્રીમદ્ ભાગવત પુરાણ આદિક જે સત્શાસ્ત્ર તેમણે જીવના કલ્યાણને અર્થે પ્રતિપાદન કર્યા એવા જે અહિંસા આદિક સદાચાર તેમને જે મનુષ્ય પાળે છે તે મનુષ્ય જે તે આ લોકને વિષે તથા પરલોકને વિષે મહાસુખિયા થાય છે. ||૮||",
-    "અને તે સદાચારનું ઉલ્લંઘન કરીને જે મનુષ્ય પોતાના મનમાં આવે તેમ વર્તે છે, તે તો કુબુધ્ધિવાળા છે અને આ લોક ને પરલોકને વિષે નિશ્ચે મોટા કષ્ટને જ પામે છે. ||૯||",
-    "તે માટે અમારા શિષ્ય એવા જે તમે સર્વે તેમણે તો પ્રીતિએ કરીને આ શિક્ષાપત્રીને અનુસરીને જ નિરંતર સાવધાનપણે વર્તવું, પણ આ શિક્ષાપત્રીનું ઉલ્લંઘન કરીને વર્તવું નહિ. ||૧૦||"
-  ];
-
-  var demoEnglish = [
-    "I (Sahajanand Swami, Lord Swaminarayan) meditate, in my heart, upon Lord Shree Krishna, on whose left stands Radhikaji, in whose heart resides Laxmiji and who plays (with His Bhaktas) in Vrindavan. || 1 ||",
-    "I Sahajanand Swami, write this Shikshapatri, Gospel of Life Divine, from Vadtal, to all my disciples who reside in different parts of the world ||2||",
-    "Shree Dharmadev's sons, Rampratapji and Icharamji, who are brothers, Rampratapji's son Ayodhyaprasad and Icharamji's son, Raghuvir; (whom I have adopted as my sons and established as the Acharyas of my disciples) ||3||",
-    "Mukundananda as a main & all 'Naishthik Brahmcharis' (Brahmin celibates), and Mayaram Bhatt as a main & all my others Grihastas devotees; (householders) ||4||",
-    "My disciples, all married women, widows as My devotees, and all Sadhus headed by Muktanand and others; Blessing ||5||",
-    "With remembrance of 'Shreeman-Narayan', all my disciples who are defendant of 'Swadharma' (self religion) as per 'Shastras' accept my ennobling blessings. ||6||",
-    "You all my devotees with concentration of mind think over the purpose of 'Shikshapatri' written by me for the spiritual welfare of every soul, realize and follow. ||7||",
-    "Those who will follow the Rules of Ethics as prescribed by the holy scriptures shall derive happiness in this world as well as in 'Parlok' (after death, pleasure of abode of Lord, Moksha). ||8||",
-    "Those who will violate the Rules of Ethics and behave willfully, are evil minded and shall suffer great distress in this world as well as in 'Parlok' (after death causing pain, go to hell). ||9||",
-    "Those who will violate the Hence forever, all my disciples do love and follow the commandments of this Shikshapatri vigilantly and do not violate them. ||10||"
-  ];
+  var draggingRow = null;
 
   // ---------- icons ----------
   var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
   var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  var ICON_GRIP = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
+  var ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  var ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
   function splitEntries(text, mode, customDelim){
     if (!text) return [];
@@ -412,6 +395,50 @@
     keyInput.placeholder = 'key name';
     keyInput.setAttribute('aria-label', 'Field key name');
     keyInput.addEventListener('input', function(){ field.key = keyInput.value; });
+
+    var reorderWrap = document.createElement('div');
+    reorderWrap.className = 'reorder-controls';
+
+    var dragHandle = document.createElement('div');
+    dragHandle.className = 'drag-handle';
+    dragHandle.title = 'Drag to reorder';
+    dragHandle.setAttribute('draggable', 'true');
+    dragHandle.innerHTML = ICON_GRIP;
+    dragHandle.addEventListener('dragstart', function(e){
+      draggingRow = row;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', field.id); } catch(err){}
+      try { e.dataTransfer.setDragImage(row, 20, 20); } catch(err){}
+    });
+    dragHandle.addEventListener('dragend', function(){
+      row.classList.remove('dragging');
+      draggingRow = null;
+      syncFieldsOrderFromDOM();
+      renumberRows();
+    });
+
+    var moveStack = document.createElement('div');
+    moveStack.className = 'move-stack';
+
+    var upBtn = document.createElement('button');
+    upBtn.type = 'button';
+    upBtn.className = 'icon-btn move-btn move-up';
+    upBtn.title = 'Move up';
+    upBtn.innerHTML = ICON_UP;
+    upBtn.addEventListener('click', function(){ moveField(field.id, -1); });
+
+    var downBtn = document.createElement('button');
+    downBtn.type = 'button';
+    downBtn.className = 'icon-btn move-btn move-down';
+    downBtn.title = 'Move down';
+    downBtn.innerHTML = ICON_DOWN;
+    downBtn.addEventListener('click', function(){ moveField(field.id, 1); });
+
+    moveStack.appendChild(upBtn);
+    moveStack.appendChild(downBtn);
+    reorderWrap.appendChild(dragHandle);
+    reorderWrap.appendChild(moveStack);
 
     var modeSelect = document.createElement('select');
     modeSelect.className = 'mode-select';
@@ -463,6 +490,7 @@
       renumberRows();
     });
 
+    head.appendChild(reorderWrap);
     head.appendChild(keyInput);
     head.appendChild(modeSelect);
     head.appendChild(badge);
@@ -556,8 +584,65 @@
     var rows = fieldsContainer.querySelectorAll('.field-row');
     rows.forEach(function(rowEl, idx){
       rowEl.querySelector('.field-num').textContent = toGujNum(idx + 1);
+      var up = rowEl.querySelector('.move-up');
+      var down = rowEl.querySelector('.move-down');
+      if (up) up.disabled = (idx === 0);
+      if (down) down.disabled = (idx === rows.length - 1);
     });
   }
+
+  function syncFieldsOrderFromDOM(){
+    var rows = fieldsContainer.querySelectorAll('.field-row');
+    var newOrder = [];
+    rows.forEach(function(rowEl){
+      var id = rowEl.getAttribute('data-field-id');
+      var f = fields.find(function(ff){ return ff.id === id; });
+      if (f) newOrder.push(f);
+    });
+    fields = newOrder;
+  }
+
+  function moveField(fieldId, direction){
+    var idx = fields.findIndex(function(f){ return f.id === fieldId; });
+    if (idx < 0) return;
+    var newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= fields.length) return;
+
+    var tmp = fields[idx]; fields[idx] = fields[newIdx]; fields[newIdx] = tmp;
+
+    var rowEl = fieldsContainer.querySelector('[data-field-id="' + fieldId + '"]');
+    if (direction === -1 && rowEl.previousElementSibling){
+      fieldsContainer.insertBefore(rowEl, rowEl.previousElementSibling);
+    } else if (direction === 1 && rowEl.nextElementSibling){
+      fieldsContainer.insertBefore(rowEl.nextElementSibling, rowEl);
+    }
+    renumberRows();
+  }
+
+  function getRowAfterPoint(container, y){
+    var rows = Array.prototype.slice.call(container.querySelectorAll('.field-row:not(.dragging)'));
+    var result = { offset: -Infinity, element: null };
+    rows.forEach(function(child){
+      var box = child.getBoundingClientRect();
+      var offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > result.offset){
+        result = { offset: offset, element: child };
+      }
+    });
+    return result.element;
+  }
+
+  fieldsContainer.addEventListener('dragover', function(e){
+    if (!draggingRow) return;
+    e.preventDefault();
+    var afterElement = getRowAfterPoint(fieldsContainer, e.clientY);
+    if (afterElement == null){
+      fieldsContainer.appendChild(draggingRow);
+    } else if (afterElement !== draggingRow){
+      fieldsContainer.insertBefore(draggingRow, afterElement);
+    }
+  });
+  fieldsContainer.addEventListener('drop', function(e){ e.preventDefault(); });
 
   function recountAllEntryBadges(){
     var rows = fieldsContainer.querySelectorAll('.field-row');
@@ -741,9 +826,9 @@
 
   // ---------- init ----------
   addField({ key: 'id', mode: 'auto', start: 1, step: 1 });
-  addField({ key: 'sanskritText', mode: 'entry', content: demoSanskrit.join('\n\n') });
-  addField({ key: 'gujaratiMeaning', mode: 'entry', content: demoGujarati.join('\n\n') });
-  addField({ key: 'englishMeaning', mode: 'entry', content: demoEnglish.join('\n\n') });
+  addField({ key: 'sanskritText', mode: 'entry' });
+  addField({ key: 'gujaratiMeaning', mode: 'entry' });
+  addField({ key: 'englishMeaning', mode: 'entry' });
   clearOutput();
 
 })();
