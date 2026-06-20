@@ -246,8 +246,7 @@
 <body>
 
 <header class="app-head">
-  <p class="eyebrow">પાઠ સંગ્રહ — Text Collection Tool</p>
-  <h1 class="title">Shlok JSON Builder</h1>
+  <h1 class="title">HK721 - JSON Builder</h1>
   <p class="subtitle">Paste or upload separate text files as fields, name each one, and combine them into one structured JSON file. Each field can hold one value per entry, the same value repeated for every entry, or an auto-incrementing number — no coding required.</p>
   <div class="steps">
     <span class="step"><span class="num">૧</span> Add your fields</span>
@@ -265,6 +264,7 @@
   <!-- LEFT: CONFIG -->
   <section class="panel">
     <h2>Fields</h2>
+    <p class="help-text" style="margin:-8px 0 14px 0;">Everything you type here is saved automatically in this browser — close the tab, refresh, or come back later and it'll still be here. Use "Clear all data" below to wipe it.</p>
 
     <div class="config-box">
       <div class="label-row">Entry separator (for "Per entry" fields)</div>
@@ -288,7 +288,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add field
       </button>
-      <button class="btn btn-ghost" id="clearAllBtn">Clear all fields</button>
+      <button class="btn btn-ghost" id="clearAllBtn">Clear all data</button>
     </div>
 
     <div id="errorBanner"></div>
@@ -351,6 +351,44 @@
   var lastGenerated = '';
   var draggingRow = null;
 
+  // ---------- persistence (browser localStorage, per-site) ----------
+  var STORAGE_KEY = 'shlokJsonBuilder_state_v1';
+  var saveTimer = null;
+
+  function saveState(){
+    try {
+      var state = {
+        fields: fields.map(function(f){
+          return { key: f.key, mode: f.mode, content: f.content, start: f.start, step: f.step, prefix: f.prefix, suffix: f.suffix };
+        }),
+        delimMode: currentDelimMode(),
+        customDelim: document.getElementById('customDelim').value,
+        fallbackCount: document.getElementById('fallbackCount').value,
+        filename: document.getElementById('filename').value
+      };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e){ /* storage unavailable (private mode / quota) — fail silently, app still works */ }
+  }
+
+  function scheduleSave(){
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 250);
+  }
+
+  function loadState(){
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var state = JSON.parse(raw);
+      if (!state || !Array.isArray(state.fields) || state.fields.length === 0) return null;
+      return state;
+    } catch(e){ return null; }
+  }
+
+  function clearState(){
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  }
+
   // ---------- icons ----------
   var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
   var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
@@ -394,7 +432,7 @@
     keyInput.value = field.key;
     keyInput.placeholder = 'key name';
     keyInput.setAttribute('aria-label', 'Field key name');
-    keyInput.addEventListener('input', function(){ field.key = keyInput.value; });
+    keyInput.addEventListener('input', function(){ field.key = keyInput.value; scheduleSave(); });
 
     var reorderWrap = document.createElement('div');
     reorderWrap.className = 'reorder-controls';
@@ -416,6 +454,7 @@
       draggingRow = null;
       syncFieldsOrderFromDOM();
       renumberRows();
+      saveState();
     });
 
     var moveStack = document.createElement('div');
@@ -450,6 +489,7 @@
     modeSelect.addEventListener('change', function(){
       field.mode = modeSelect.value;
       renderBody();
+      saveState();
     });
 
     var badge = document.createElement('span');
@@ -473,6 +513,7 @@
       reader.onload = function(e){
         field.content = String(e.target.result || '');
         renderBody();
+        saveState();
       };
       reader.readAsText(file);
       fileInput.value = '';
@@ -488,6 +529,7 @@
       fields = fields.filter(function(f){ return f.id !== field.id; });
       row.remove();
       renumberRows();
+      saveState();
     });
 
     head.appendChild(reorderWrap);
@@ -518,6 +560,7 @@
         textarea.addEventListener('input', function(){
           field.content = textarea.value;
           updateBadge();
+          scheduleSave();
         });
         body.appendChild(textarea);
       } else if (field.mode === 'const'){
@@ -529,6 +572,7 @@
         constInput.addEventListener('input', function(){
           field.content = constInput.value;
           updateBadge();
+          scheduleSave();
         });
         body.appendChild(constInput);
       } else if (field.mode === 'auto'){
@@ -543,7 +587,7 @@
           inp.type = (labelText === 'Start' || labelText === 'Step') ? 'number' : 'text';
           inp.value = value;
           if (ph) inp.placeholder = ph;
-          inp.addEventListener('input', function(){ onInput(inp.value); updateBadge(); });
+          inp.addEventListener('input', function(){ onInput(inp.value); updateBadge(); scheduleSave(); });
           wrap.appendChild(lbl);
           wrap.appendChild(inp);
           return wrap;
@@ -617,6 +661,7 @@
       fieldsContainer.insertBefore(rowEl.nextElementSibling, rowEl);
     }
     renumberRows();
+    saveState();
   }
 
   function getRowAfterPoint(container, y){
@@ -671,13 +716,19 @@
 
   document.getElementById('addFieldBtn').addEventListener('click', function(){
     addField({ mode: 'entry' });
+    saveState();
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', function(){
+    var ok = window.confirm('This will clear all fields and saved data from this browser. Continue?');
+    if (!ok) return;
     fields = [];
     fieldsContainer.innerHTML = '';
+    clearState();
     addField({ key: 'field_1', mode: 'entry' });
+    document.getElementById('filename').value = 'data.json';
     clearOutput();
+    saveState();
   });
 
   var delimRadios = document.querySelectorAll('input[name="delim"]');
@@ -686,11 +737,15 @@
     r.addEventListener('change', function(){
       customDelimInput.disabled = (currentDelimMode() !== 'custom');
       recountAllEntryBadges();
+      saveState();
     });
   });
   customDelimInput.addEventListener('input', function(){
     if (currentDelimMode() === 'custom') recountAllEntryBadges();
+    scheduleSave();
   });
+  document.getElementById('fallbackCount').addEventListener('input', scheduleSave);
+  document.getElementById('filename').addEventListener('input', scheduleSave);
 
   function showError(msg){ document.getElementById('errorBanner').innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>'; }
   function clearError(){ document.getElementById('errorBanner').innerHTML = ''; }
@@ -704,7 +759,7 @@
   var sealEl = document.getElementById('seal');
 
   function clearOutput(){
-    outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;">ખાલી</p>Your JSON will appear here once generated.</div>';
+    outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;"></p>Your JSON will appear here once generated.</div>';
     sealEl.textContent = '0';
     copyBtn.disabled = true;
     downloadBtn.disabled = true;
@@ -825,10 +880,24 @@
   });
 
   // ---------- init ----------
-  addField({ key: 'id', mode: 'auto', start: 1, step: 1 });
-  addField({ key: 'sanskritText', mode: 'entry' });
-  addField({ key: 'gujaratiMeaning', mode: 'entry' });
-  addField({ key: 'englishMeaning', mode: 'entry' });
+  var restored = loadState();
+  if (restored){
+    restored.fields.forEach(function(f){ addField(f); });
+    if (restored.delimMode === 'custom'){
+      var customRadio = document.querySelector('input[name="delim"][value="custom"]');
+      if (customRadio) customRadio.checked = true;
+      customDelimInput.disabled = false;
+    }
+    if (restored.customDelim) customDelimInput.value = restored.customDelim;
+    if (restored.fallbackCount) document.getElementById('fallbackCount').value = restored.fallbackCount;
+    if (restored.filename) document.getElementById('filename').value = restored.filename;
+    recountAllEntryBadges();
+  } else {
+    addField({ key: 'id', mode: 'auto', start: 1, step: 1 });
+    addField({ key: 'sanskritText', mode: 'entry' });
+    addField({ key: 'gujaratiMeaning', mode: 'entry' });
+    addField({ key: 'englishMeaning', mode: 'entry' });
+  }
   clearOutput();
 
 })();
