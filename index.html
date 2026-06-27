@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shlok JSON Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Gujarati:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #F4EDDC;
@@ -45,7 +45,7 @@
   a{ color: inherit; }
 
   /* ---------- Header ---------- */
-  header.app-head{ max-width: 1180px; margin: 0 auto 28px auto; }
+  header.app-head{ max-width: 1180px; margin: 0 auto 18px auto; }
 
   .eyebrow{
     font-family: 'Noto Sans Gujarati', sans-serif;
@@ -60,19 +60,33 @@
   }
 
   p.subtitle{
-    font-size: 14.5px; color: var(--ink-soft); margin: 0 0 18px 0;
-    max-width: 680px; line-height: 1.5;
+    font-size: 14.5px; color: var(--ink-soft); margin: 0;
+    max-width: 700px; line-height: 1.5;
   }
 
-  .steps{
-    display: flex; flex-wrap: wrap; gap: 6px 0; align-items: center;
-    font-size: 13px; color: var(--ink-soft);
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    padding: 10px 0;
+  /* ---------- Tabs ---------- */
+  .tab-switch{
+    max-width: 1180px; margin: 22px auto 20px auto;
+    display:flex; gap: 6px; border-bottom: 1px solid var(--line);
   }
-  .steps .step{ display:flex; align-items:center; gap:8px; padding: 0 14px; }
-  .steps .num{ font-family: 'Noto Sans Gujarati', sans-serif; color: var(--maroon); font-weight: 700; font-size: 14px; }
-  .steps .arrow{ color: var(--gold); opacity: 0.7; }
+  .tab-btn{
+    background: transparent; border: none; border-bottom: 3px solid transparent;
+    padding: 8px 18px 12px 18px; cursor: pointer;
+    display:flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  }
+  .tab-btn .tab-main{
+    font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--ink-soft);
+  }
+  .tab-btn .tab-sub{
+    font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
+    text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.75;
+  }
+  .tab-btn:hover .tab-main, .tab-btn:hover .tab-sub{ color: var(--maroon-dark); }
+  .tab-btn.active{ border-bottom-color: var(--maroon); }
+  .tab-btn.active .tab-main{ color: var(--maroon-dark); }
+  .tab-btn.active .tab-sub{ color: var(--maroon); }
+
+  .tab-panel[hidden]{ display: none; }
 
   /* ---------- Layout ---------- */
   main.layout{
@@ -119,7 +133,7 @@
   .mini-input{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
 
   /* ---------- Field rows ---------- */
-  #fieldsContainer{ display:flex; flex-direction: column; gap: 12px; }
+  #fieldsContainer, #textFieldsContainer{ display:flex; flex-direction: column; gap: 12px; }
 
   .field-row{
     display:flex; gap: 10px; border: 1px solid var(--line); border-radius: 8px;
@@ -187,7 +201,7 @@
   .auto-grid label{ font-size: 10.5px; color: var(--ink-soft); display:block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
   .auto-grid input{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
 
-  .row-actions{ display:flex; align-items:center; justify-content: space-between; margin-top: 14px; }
+  .row-actions{ display:flex; align-items:center; justify-content: space-between; margin-top: 14px; flex-wrap: wrap; gap: 10px; }
 
   .btn{
     font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13.5px; padding: 9px 16px;
@@ -207,6 +221,9 @@
   }
   .btn-primary:hover{ background: var(--maroon-dark); border-color: var(--maroon-dark); }
   .btn-primary:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-danger-solid{ background: var(--maroon); border-color: var(--maroon); color: #FBF1DE; }
+  .btn-danger-solid:hover{ background: var(--maroon-dark); border-color: var(--maroon-dark); }
 
   /* ---------- Output panel ---------- */
   .output-head{ display:flex; align-items:center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
@@ -228,9 +245,17 @@
   .empty-state{ padding: 40px 16px; text-align: center; color: var(--ink-soft); font-size: 13.5px; }
   .empty-state .eyebrow{ margin-bottom: 4px; }
 
-  .warning-banner, .error-banner{ font-size: 12.8px; padding: 9px 12px; border-radius: 6px; margin-bottom: 12px; line-height: 1.5; }
+  .warning-banner, .error-banner, .success-banner{ font-size: 12.8px; padding: 9px 12px; border-radius: 6px; margin-bottom: 12px; line-height: 1.5; }
   .warning-banner{ background: #FBF0DC; border: 1px solid var(--gold); color: #6B4E16; }
   .error-banner{ background: #FBE2DE; border: 1px solid var(--error); color: var(--error); font-weight: 600; }
+  .success-banner{ background: var(--teal-soft); border: 1px solid var(--teal); color: var(--teal); font-weight: 600; }
+
+  .confirm-banner{
+    background: #FBF0DC; border: 1px solid var(--gold); border-radius: 6px;
+    padding: 11px 12px; margin-top: 10px; font-size: 13px; color: #6B4E16;
+    display:flex; flex-direction: column; gap: 9px;
+  }
+  .confirm-banner .confirm-actions{ display:flex; gap: 8px; }
 
   .download-bar{ display:flex; gap: 8px; margin-top: 14px; }
   .download-bar input{ flex:1; }
@@ -246,25 +271,27 @@
 <body>
 
 <header class="app-head">
-  <h1 class="title">HK721 - JSON Builder</h1>
-  <p class="subtitle">Paste or upload separate text files as fields, name each one, and combine them into one structured JSON file. Each field can hold one value per entry, the same value repeated for every entry, or an auto-incrementing number — no coding required.</p>
-  <div class="steps">
-    <span class="step"><span class="num">૧</span> Add your fields</span>
-    <span class="arrow">→</span>
-    <span class="step"><span class="num">૨</span> Choose how each one fills in</span>
-    <span class="arrow">→</span>
-    <span class="step"><span class="num">૩</span> Generate JSON</span>
-    <span class="arrow">→</span>
-    <span class="step"><span class="num">૪</span> Copy or download</span>
-  </div>
+  <p class="eyebrow">પાઠ સંગ્રહ — Text Collection Tool</p>
+  <h1 class="title">Shlok JSON Builder</h1>
+  <p class="subtitle">Build a structured JSON file out of separate text fields — or go the other way and turn an existing JSON file back into separate text files. No coding required.</p>
 </header>
 
-<main class="layout">
+<div class="tab-switch" role="tablist">
+  <button type="button" class="tab-btn active" data-tab="json" role="tab" aria-selected="true">
+    <span class="tab-main">JSON</span><span class="tab-sub">text → JSON</span>
+  </button>
+  <button type="button" class="tab-btn" data-tab="text" role="tab" aria-selected="false">
+    <span class="tab-main">TEXT</span><span class="tab-sub">JSON → text</span>
+  </button>
+</div>
+
+<!-- ============== TAB 1: JSON BUILDER ============== -->
+<main class="layout tab-panel" id="panel-json">
 
   <!-- LEFT: CONFIG -->
   <section class="panel">
     <h2>Fields</h2>
-    <p class="help-text" style="margin:-8px 0 14px 0;">Everything you type here is saved automatically in this browser — close the tab, refresh, or come back later and it'll still be here. Use "Clear all data" below to wipe it.</p>
+    <p class="help-text" style="margin:-8px 0 14px 0;">Everything you type here is saved automatically in this browser — close the tab, refresh, or come back later and it'll still be here.</p>
 
     <div class="config-box">
       <div class="label-row">Entry separator (for "Per entry" fields)</div>
@@ -291,6 +318,7 @@
       <button class="btn btn-ghost" id="clearAllBtn">Clear all data</button>
     </div>
 
+    <div id="clearConfirmBanner"></div>
     <div id="errorBanner"></div>
 
     <button class="btn-primary" id="generateBtn">Generate JSON</button>
@@ -327,13 +355,75 @@
 
 </main>
 
+<!-- ============== TAB 2: TEXT EXTRACTOR ============== -->
+<main class="layout tab-panel" id="panel-text" hidden>
+
+  <!-- LEFT: LOAD JSON -->
+  <section class="panel">
+    <h2>Load JSON</h2>
+    <p class="help-text" style="margin:-8px 0 14px 0;">Paste a JSON array below, or upload a .json file, then click "Load fields". Each key in your JSON becomes its own field on the right, ready to export as text.</p>
+
+    <textarea id="importJsonText" class="field-content" style="min-height:220px;" placeholder='[ { &quot;id&quot;: 1, &quot;title&quot;: &quot;...&quot; }, { &quot;id&quot;: 2, &quot;title&quot;: &quot;...&quot; } ]'></textarea>
+
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="importUploadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload .json file
+      </button>
+      <input type="file" id="importFileInput" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="config-box" style="margin-top:16px;">
+      <div class="label-row">Entry separator (within each field)</div>
+      <div class="config-row">
+        <label class="radio-line"><input type="radio" name="delimText" value="blank" checked> Blank line between entries</label>
+        <label class="radio-line"><input type="radio" name="delimText" value="custom"> Custom separator</label>
+        <div class="field-block" style="max-width:140px;">
+          <input type="text" id="customDelimText" class="mini-input" value="---" disabled placeholder="e.g. ---">
+        </div>
+      </div>
+    </div>
+
+    <div id="importErrorBanner"></div>
+
+    <button class="btn-primary" id="loadFieldsBtn">Load fields</button>
+  </section>
+
+  <!-- RIGHT: RECONSTRUCTED FIELDS + EXPORT -->
+  <section class="panel">
+    <h2>Fields</h2>
+    <p class="help-text" style="margin:-8px 0 14px 0;">You can edit any field before exporting. "Generate Text Files" downloads one .txt per field below, plus a combined.txt with everything mixed together.</p>
+
+    <div id="textFieldsContainer"></div>
+
+    <div class="row-actions">
+      <button class="btn" id="addTextFieldBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add field
+      </button>
+      <button class="btn btn-ghost" id="clearTextBtn">Clear all</button>
+    </div>
+
+    <div id="textClearConfirmBanner"></div>
+    <div id="textStatusBanner"></div>
+
+    <button class="btn-primary" id="generateTextBtn">Generate Text Files</button>
+  </section>
+
+</main>
+
 <footer class="note">
+  Everything runs in your browser — your text never leaves this page.
   <span class="copyright">© Kushal Hirpara 2026. All Rights Reserved.</span>
 </footer>
 
 <script>
 (function(){
   "use strict";
+
+  /* ============================================================
+     SHARED HELPERS
+     ============================================================ */
 
   var GUJ_DIGITS = ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'];
   function toGujNum(n){
@@ -343,10 +433,94 @@
     }).join('');
   }
 
-  var fields = [];
   var counter = 0;
   function uid(){ counter += 1; return 'f' + counter; }
 
+  function splitEntries(text, mode, customDelim){
+    if (!text) return [];
+    var t = text.replace(/\r\n/g, '\n');
+    var parts;
+    if (mode === 'custom' && customDelim) parts = t.split(customDelim);
+    else parts = t.split(/\n[ \t]*\n+/);
+    return parts.map(function(p){ return p.trim(); }).filter(function(p){ return p.length > 0; });
+  }
+
+  function valueToText(v){
+    return (v === undefined || v === null) ? '' : String(v);
+  }
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function sanitizeFilename(name){
+    return (name || 'file').trim().replace(/[\\/:*?"<>|]/g, '_') || 'file';
+  }
+
+  function triggerDownload(content, filename, mimeType){
+    var blob = new Blob([content], { type: mimeType || 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  // Inline confirm banner — avoids native window.confirm(), which can be
+  // blocked or silently swallowed inside sandboxed preview iframes.
+  function showInlineConfirm(container, message, confirmLabel, onConfirm){
+    container.innerHTML =
+      '<div class="confirm-banner">' +
+        '<span>' + escapeHtml(message) + '</span>' +
+        '<div class="confirm-actions">' +
+          '<button type="button" class="btn btn-danger-solid" id="__confirmYes">' + escapeHtml(confirmLabel) + '</button>' +
+          '<button type="button" class="btn btn-ghost" id="__confirmNo">Cancel</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('__confirmYes').addEventListener('click', function(){
+      container.innerHTML = '';
+      onConfirm();
+    });
+    document.getElementById('__confirmNo').addEventListener('click', function(){
+      container.innerHTML = '';
+    });
+  }
+
+  var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  var ICON_GRIP = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
+  var ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  var ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  /* ============================================================
+     TAB SWITCHING
+     ============================================================ */
+
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var tabPanels = {
+    json: document.getElementById('panel-json'),
+    text: document.getElementById('panel-text')
+  };
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = btn.getAttribute('data-tab');
+      tabBtns.forEach(function(b){
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+      Object.keys(tabPanels).forEach(function(key){
+        tabPanels[key].hidden = (key !== target);
+      });
+    });
+  });
+
+  /* ============================================================
+     TAB 1 — JSON BUILDER  (text fields -> one JSON file)
+     ============================================================ */
+
+  var fields = [];
   var fieldsContainer = document.getElementById('fieldsContainer');
   var lastGenerated = '';
   var draggingRow = null;
@@ -389,29 +563,12 @@
     try { window.localStorage.removeItem(STORAGE_KEY); } catch(e){}
   }
 
-  // ---------- icons ----------
-  var ICON_UPLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
-  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
-  var ICON_GRIP = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
-  var ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
-  var ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-
-  function splitEntries(text, mode, customDelim){
-    if (!text) return [];
-    var t = text.replace(/\r\n/g, '\n');
-    var parts;
-    if (mode === 'custom' && customDelim) parts = t.split(customDelim);
-    else parts = t.split(/\n[ \t]*\n+/);
-    return parts.map(function(p){ return p.trim(); }).filter(function(p){ return p.length > 0; });
-  }
-
   function currentDelimMode(){
     var checked = document.querySelector('input[name="delim"]:checked');
     return checked ? checked.value : 'blank';
   }
   function currentCustomDelim(){ return document.getElementById('customDelim').value || '---'; }
 
-  // ---------- field row rendering ----------
   function appendFieldRow(field){
     var row = document.createElement('div');
     row.className = 'field-row';
@@ -425,14 +582,6 @@
 
     var head = document.createElement('div');
     head.className = 'field-head';
-
-    var keyInput = document.createElement('input');
-    keyInput.type = 'text';
-    keyInput.className = 'field-key';
-    keyInput.value = field.key;
-    keyInput.placeholder = 'key name';
-    keyInput.setAttribute('aria-label', 'Field key name');
-    keyInput.addEventListener('input', function(){ field.key = keyInput.value; scheduleSave(); });
 
     var reorderWrap = document.createElement('div');
     reorderWrap.className = 'reorder-controls';
@@ -459,25 +608,26 @@
 
     var moveStack = document.createElement('div');
     moveStack.className = 'move-stack';
-
     var upBtn = document.createElement('button');
-    upBtn.type = 'button';
-    upBtn.className = 'icon-btn move-btn move-up';
-    upBtn.title = 'Move up';
+    upBtn.type = 'button'; upBtn.className = 'icon-btn move-btn move-up'; upBtn.title = 'Move up';
     upBtn.innerHTML = ICON_UP;
     upBtn.addEventListener('click', function(){ moveField(field.id, -1); });
-
     var downBtn = document.createElement('button');
-    downBtn.type = 'button';
-    downBtn.className = 'icon-btn move-btn move-down';
-    downBtn.title = 'Move down';
+    downBtn.type = 'button'; downBtn.className = 'icon-btn move-btn move-down'; downBtn.title = 'Move down';
     downBtn.innerHTML = ICON_DOWN;
     downBtn.addEventListener('click', function(){ moveField(field.id, 1); });
-
     moveStack.appendChild(upBtn);
     moveStack.appendChild(downBtn);
     reorderWrap.appendChild(dragHandle);
     reorderWrap.appendChild(moveStack);
+
+    var keyInput = document.createElement('input');
+    keyInput.type = 'text';
+    keyInput.className = 'field-key';
+    keyInput.value = field.key;
+    keyInput.placeholder = 'key name';
+    keyInput.setAttribute('aria-label', 'Field key name');
+    keyInput.addEventListener('input', function(){ field.key = keyInput.value; scheduleSave(); });
 
     var modeSelect = document.createElement('select');
     modeSelect.className = 'mode-select';
@@ -720,15 +870,20 @@
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', function(){
-    var ok = window.confirm('This will clear all fields and saved data from this browser. Continue?');
-    if (!ok) return;
-    fields = [];
-    fieldsContainer.innerHTML = '';
-    clearState();
-    addField({ key: 'field_1', mode: 'entry' });
-    document.getElementById('filename').value = 'data.json';
-    clearOutput();
-    saveState();
+    showInlineConfirm(
+      document.getElementById('clearConfirmBanner'),
+      'This will clear all fields and saved data from this browser.',
+      'Yes, clear it',
+      function(){
+        fields = [];
+        fieldsContainer.innerHTML = '';
+        clearState();
+        addField({ key: 'field_1', mode: 'entry' });
+        document.getElementById('filename').value = 'data.json';
+        clearOutput();
+        saveState();
+      }
+    );
   });
 
   var delimRadios = document.querySelectorAll('input[name="delim"]');
@@ -751,7 +906,6 @@
   function clearError(){ document.getElementById('errorBanner').innerHTML = ''; }
   function showWarning(msg){ document.getElementById('warningBanner').innerHTML = '<div class="warning-banner">' + escapeHtml(msg) + '</div>'; }
   function clearWarning(){ document.getElementById('warningBanner').innerHTML = ''; }
-  function escapeHtml(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
   var outputEl = document.getElementById('output');
   var copyBtn = document.getElementById('copyBtn');
@@ -759,7 +913,7 @@
   var sealEl = document.getElementById('seal');
 
   function clearOutput(){
-    outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;"></p>Your JSON will appear here once generated.</div>';
+    outputEl.innerHTML = '<div class="empty-state"><p class="eyebrow" style="margin-bottom:6px;">ખાલી</p>Your JSON will appear here once generated.</div>';
     sealEl.textContent = '0';
     copyBtn.disabled = true;
     downloadBtn.disabled = true;
@@ -869,17 +1023,11 @@
     var filenameInput = document.getElementById('filename');
     var name = (filenameInput.value || 'data.json').trim();
     if (!/\.json$/i.test(name)) name += '.json';
-    name = name.replace(/[\\/:*?"<>|]/g, '_');
-
-    var blob = new Blob([lastGenerated], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = name;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    name = sanitizeFilename(name);
+    triggerDownload(lastGenerated, name, 'application/json');
   });
 
-  // ---------- init ----------
+  // ---------- init (Tab 1) ----------
   var restored = loadState();
   if (restored){
     restored.fields.forEach(function(f){ addField(f); });
@@ -899,6 +1047,257 @@
     addField({ key: 'englishMeaning', mode: 'entry' });
   }
   clearOutput();
+
+  /* ============================================================
+     TAB 2 — TEXT EXTRACTOR  (one JSON file -> text fields)
+     ============================================================ */
+
+  var textFields = [];
+  var textFieldsContainer = document.getElementById('textFieldsContainer');
+
+  function currentTextDelimMode(){
+    var checked = document.querySelector('input[name="delimText"]:checked');
+    return checked ? checked.value : 'blank';
+  }
+  function currentTextCustomDelim(){ return document.getElementById('customDelimText').value || '---'; }
+
+  function appendTextFieldRow(field){
+    var row = document.createElement('div');
+    row.className = 'field-row';
+    row.setAttribute('data-field-id', field.id);
+
+    var num = document.createElement('div');
+    num.className = 'field-num';
+
+    var main = document.createElement('div');
+    main.className = 'field-main';
+
+    var head = document.createElement('div');
+    head.className = 'field-head';
+
+    var keyInput = document.createElement('input');
+    keyInput.type = 'text';
+    keyInput.className = 'field-key';
+    keyInput.value = field.key;
+    keyInput.placeholder = 'key name';
+    keyInput.addEventListener('input', function(){ field.key = keyInput.value; });
+
+    var badge = document.createElement('span');
+    badge.className = 'badge badge-entry';
+
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn danger';
+    removeBtn.title = 'Remove this field';
+    removeBtn.innerHTML = ICON_TRASH;
+    removeBtn.addEventListener('click', function(){
+      if (textFields.length <= 1){ return; }
+      textFields = textFields.filter(function(f){ return f.id !== field.id; });
+      row.remove();
+      renumberTextRows();
+    });
+
+    head.appendChild(keyInput);
+    head.appendChild(badge);
+    head.appendChild(removeBtn);
+
+    var textarea = document.createElement('textarea');
+    textarea.className = 'field-content';
+    textarea.placeholder = 'Values for this key, one entry per blank-line-separated block.';
+    textarea.value = field.content;
+    textarea.addEventListener('input', function(){
+      field.content = textarea.value;
+      updateBadge();
+    });
+
+    main.appendChild(head);
+    main.appendChild(textarea);
+    row.appendChild(num);
+    row.appendChild(main);
+    textFieldsContainer.appendChild(row);
+
+    function updateBadge(){
+      var n = splitEntries(field.content, currentTextDelimMode(), currentTextCustomDelim()).length;
+      badge.textContent = n + (n === 1 ? ' entry' : ' entries');
+    }
+    row._updateBadge = updateBadge;
+    updateBadge();
+  }
+
+  function renumberTextRows(){
+    var rows = textFieldsContainer.querySelectorAll('.field-row');
+    rows.forEach(function(rowEl, idx){
+      rowEl.querySelector('.field-num').textContent = toGujNum(idx + 1);
+    });
+  }
+
+  function recountAllTextBadges(){
+    var rows = textFieldsContainer.querySelectorAll('.field-row');
+    rows.forEach(function(rowEl){
+      var id = rowEl.getAttribute('data-field-id');
+      var f = textFields.find(function(ff){ return ff.id === id; });
+      if (f && rowEl._updateBadge) rowEl._updateBadge();
+    });
+  }
+
+  function addTextField(opts){
+    opts = opts || {};
+    var field = {
+      id: uid(),
+      key: opts.key || ('field_' + (textFields.length + 1)),
+      content: opts.content || ''
+    };
+    textFields.push(field);
+    appendTextFieldRow(field);
+    renumberTextRows();
+  }
+
+  document.getElementById('addTextFieldBtn').addEventListener('click', function(){
+    addTextField({});
+  });
+
+  document.getElementById('clearTextBtn').addEventListener('click', function(){
+    showInlineConfirm(
+      document.getElementById('textClearConfirmBanner'),
+      'This will clear all fields in this tab.',
+      'Yes, clear it',
+      function(){
+        textFields = [];
+        textFieldsContainer.innerHTML = '';
+        addTextField({ key: 'field_1', content: '' });
+        document.getElementById('importJsonText').value = '';
+        clearImportError();
+        clearTextStatus();
+      }
+    );
+  });
+
+  var delimTextRadios = document.querySelectorAll('input[name="delimText"]');
+  var customDelimTextInput = document.getElementById('customDelimText');
+  delimTextRadios.forEach(function(r){
+    r.addEventListener('change', function(){
+      customDelimTextInput.disabled = (currentTextDelimMode() !== 'custom');
+      recountAllTextBadges();
+    });
+  });
+  customDelimTextInput.addEventListener('input', function(){
+    if (currentTextDelimMode() === 'custom') recountAllTextBadges();
+  });
+
+  function showImportError(msg){ document.getElementById('importErrorBanner').innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>'; }
+  function clearImportError(){ document.getElementById('importErrorBanner').innerHTML = ''; }
+  function showTextStatus(msg, isError){
+    document.getElementById('textStatusBanner').innerHTML =
+      '<div class="' + (isError ? 'error-banner' : 'success-banner') + '">' + escapeHtml(msg) + '</div>';
+  }
+  function clearTextStatus(){ document.getElementById('textStatusBanner').innerHTML = ''; }
+
+  function loadTextFieldsFromJson(jsonText){
+    clearImportError();
+    var parsed;
+    try {
+      parsed = JSON.parse(jsonText);
+    } catch(e){
+      showImportError('That isn\'t valid JSON — check for missing commas or brackets and try again.');
+      return;
+    }
+    if (!Array.isArray(parsed)){
+      if (parsed && typeof parsed === 'object'){ parsed = [parsed]; }
+      else { showImportError('Expected a JSON array of objects, like [ {...}, {...} ].'); return; }
+    }
+    if (parsed.length === 0){
+      showImportError('That JSON array is empty — nothing to load.');
+      return;
+    }
+
+    var orderedKeys = [];
+    parsed.forEach(function(obj){
+      if (obj && typeof obj === 'object'){
+        Object.keys(obj).forEach(function(k){
+          if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
+        });
+      }
+    });
+
+    textFields = [];
+    textFieldsContainer.innerHTML = '';
+    orderedKeys.forEach(function(key){
+      var content = parsed.map(function(obj){ return valueToText(obj && obj[key]); }).join('\n\n');
+      addTextField({ key: key, content: content });
+    });
+
+    showTextStatus('Loaded ' + parsed.length + ' entries into ' + orderedKeys.length + ' field' + (orderedKeys.length === 1 ? '' : 's') + '.', false);
+  }
+
+  document.getElementById('loadFieldsBtn').addEventListener('click', function(){
+    var text = document.getElementById('importJsonText').value.trim();
+    if (!text){ showImportError('Paste some JSON first, or upload a .json file.'); return; }
+    loadTextFieldsFromJson(text);
+  });
+
+  document.getElementById('importUploadBtn').addEventListener('click', function(){
+    document.getElementById('importFileInput').click();
+  });
+  document.getElementById('importFileInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var text = String(ev.target.result || '');
+      document.getElementById('importJsonText').value = text;
+      loadTextFieldsFromJson(text);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  document.getElementById('generateTextBtn').addEventListener('click', function(){
+    clearTextStatus();
+    if (textFields.length === 0){ showTextStatus('Add or load at least one field first.', true); return; }
+
+    var keys = textFields.map(function(f){ return f.key.trim(); });
+    if (keys.some(function(k){ return k.length === 0; })){
+      showTextStatus('Every field needs a key name.', true);
+      return;
+    }
+    var seen = {}, dup = null;
+    for (var i = 0; i < keys.length; i++){
+      if (seen[keys[i]]){ dup = keys[i]; break; }
+      seen[keys[i]] = true;
+    }
+    if (dup){
+      showTextStatus('The key "' + dup + '" is used more than once.', true);
+      return;
+    }
+
+    // one file per field — raw content, exactly as shown
+    textFields.forEach(function(f){
+      triggerDownload(f.content, sanitizeFilename(f.key.trim()) + '.txt', 'text/plain');
+    });
+
+    // combined / mixed file — entries zipped by index
+    var mode = currentTextDelimMode(), customDelim = currentTextCustomDelim();
+    var perFieldEntries = textFields.map(function(f){
+      return { key: f.key.trim(), entries: splitEntries(f.content, mode, customDelim) };
+    });
+    var maxLen = 0;
+    perFieldEntries.forEach(function(pf){ if (pf.entries.length > maxLen) maxLen = pf.entries.length; });
+
+    var blocks = [];
+    for (var n = 0; n < maxLen; n++){
+      var lines = perFieldEntries.map(function(pf){
+        var v = pf.entries[n] !== undefined ? pf.entries[n] : '';
+        return pf.key + ': ' + v;
+      });
+      blocks.push(lines.join('\n'));
+    }
+    triggerDownload(blocks.join('\n\n'), 'combined.txt', 'text/plain');
+
+    showTextStatus('Downloaded ' + textFields.length + ' field file' + (textFields.length === 1 ? '' : 's') + ' + combined.txt.', false);
+  });
+
+  // ---------- init (Tab 2) ----------
+  addTextField({ key: 'field_1', content: '' });
 
 })();
 </script>
